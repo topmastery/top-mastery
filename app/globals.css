@@ -1,0 +1,264 @@
+/* @ts-ignore */
+/* This is a Tailwind CSS file */
+/* postcss-preset-env stage 0 */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #ffd900;
+  --primary-light: #ffe133;
+  --primary-dark: #e6c300;
+  --dark-bg: #121212;
+  --dark-light: #2a2a2a;
+  --light-bg: #ffffff;
+  --light-dark: #f5f5f5;
+  --text-dark: #333333;
+  --text-light: #ffffff;
+}
+
+:root[data-theme="light"] {
+  --dark-bg: #ffffff;
+  --dark-light: #f5f5f5;
+  --text-light: #333333;
+}
+
+:root[data-theme="dark"] {
+  --dark-bg: #121212;
+  --dark-light: #2a2a2a;
+  --text-light: #ffffff;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+  }
+  
+  body {
+    @apply bg-dark text-light transition-colors duration-300;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body[data-theme="light"] {
+    @apply bg-light text-dark;
+  }
+
+  body[data-theme="dark"] {
+    @apply bg-dark text-light;
+  }
+
+  img {
+    @apply select-none;
+  }
+
+  ::selection {
+    @apply bg-primary/30 text-light;
+  }
+}
+
+@layer components {
+  .nav-link {
+    @apply px-4 py-2 text-light/80 hover:text-light transition-colors duration-300 relative
+           after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5
+           after:bg-primary after:transition-all after:duration-300 hover:after:w-full;
+  }
+
+  .nav-link.active {
+    @apply text-primary after:w-full;
+  }
+
+  [data-theme="light"] .nav-link {
+    @apply text-dark/80 hover:text-dark;
+  }
+
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-light text-dark font-bold py-3 px-6 rounded-lg 
+           transition-all duration-300 ease-in-out transform hover:scale-105 
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50
+           active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed
+           shadow-lg hover:shadow-xl;
+  }
+
+  .section-title {
+    @apply text-4xl md:text-5xl font-bold mb-8 text-center relative
+           after:content-[''] after:absolute after:w-24 after:h-1 after:bg-primary
+           after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:rounded-full
+           pb-6 drop-shadow-lg;
+  }
+
+  [data-theme="light"] .section-title {
+    @apply text-dark;
+  }
+
+  .section-subtitle {
+    @apply text-xl text-gray-400 mb-12 text-center max-w-2xl mx-auto leading-relaxed;
+  }
+
+  [data-theme="light"] .section-subtitle {
+    @apply text-gray-600;
+  }
+
+  .image-hover {
+    @apply transition-all duration-300 hover:brightness-110 hover:contrast-110 hover:saturate-110;
+  }
+
+  .card {
+    @apply bg-dark-light rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300
+           hover:transform hover:scale-[1.02];
+  }
+
+  [data-theme="light"] .card {
+    @apply bg-light-dark hover:bg-light;
+  }
+}
+
+/* تحسينات للتمرير */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dark-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* تحسينات للنص */
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-light;
+}
+
+/* تأثيرات الحركة */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.slide-in {
+  animation: slideIn 0.5s ease-out forwards;
+}
+
+.float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* تحسينات للأجهزة المحمولة */
+@media (max-width: 768px) {
+  .section-title {
+    @apply text-3xl after:w-16;
+  }
+
+  .section-subtitle {
+    @apply text-lg;
+  }
+
+  .container {
+    @apply px-4;
+  }
+}
+
+/* تحسينات لوضع الظلام */
+.dark {
+  @apply bg-dark text-light;
+}
+
+.light {
+  @apply bg-light text-dark;
+}
+
+/* تحسينات للطباعة */
+@media print {
+  .no-print {
+    display: none;
+  }
+  
+  body {
+    @apply bg-white text-dark;
+  }
+}
+
+.text-glow {
+  animation: glow 1.2s ease-in-out forwards;
+}
+
+@keyframes glow {
+  0% {
+    transform: scale(1);
+    text-shadow: 0 0 0 rgba(255, 217, 0, 0);
+  }
+  50% {
+    transform: scale(1.4);
+    text-shadow: 0 0 30px rgba(255, 217, 0, 0.8);
+  }
+  100% {
+    transform: scale(1.2);
+    text-shadow: 0 0 20px rgba(255, 217, 0, 0.6),
+                 0 0 40px rgba(255, 217, 0, 0.3);
+  }
+}
+
+.absolute-center-y {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.swiper-pagination-bullet {
+  margin: 0 4px !important;
+}
+
+@media (min-width: 640px) {
+  .swiper-pagination-bullet {
+    margin: 0 6px !important;
+  }
+}
+
+.bg-grid-pattern {
+  background-image: radial-gradient(circle, #ffffff 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+.partners-slider .swiper-slide {
+  transition: all 0.3s ease;
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+.partners-slider .swiper-slide-active {
+  transform: scale(1);
+  opacity: 1;
+}
