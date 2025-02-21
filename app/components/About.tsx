@@ -5,27 +5,26 @@ import Image from 'next/image';
 
 const Counter = ({ value }: { value: number }) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "0px 0px -50px 0px" });
+  const isInView = useInView(ref, { 
+    once: true, 
+    margin: "0px 0px -50px 0px",
+    amount: 0.5 
+  });
+  
   const motionValue = useMotionValue(0);
   const springValue = useSpring(motionValue, {
-    damping: 55,     // تقليل damping لجعل الحركة أسرع
-    stiffness: 120,  // زيادة stiffness لتسريع الحركة
-    mass: 0.5,       // تقليل mass لجعل الحركة أخف
-    restSpeed: 0.2   // إضافة restSpeed للتحكم في سرعة النهاية
+    damping: 45,
+    stiffness: 100,
+    mass: 0.5,
+    restSpeed: 0.2,
+    restDelta: 0.5
   });
 
   useEffect(() => {
     if (isInView) {
       animate(motionValue, value, {
-        duration: 1.8,    // تقليل مدة الحركة الإجمالية
-        ease: (x) => {
-          // دالة مخصصة للتحكم في سرعة الحركة
-          // تسريع الحركة في النهاية (عند الأرقام الأخيرة)
-          if (x > 0.9) {
-            return 1;
-          }
-          return x * (2 - x); // تسارع في البداية وتباطؤ تدريجي
-        }
+        duration: 1.5,
+        ease: [0.32, 0.72, 0, 1]
       });
     }
   }, [motionValue, value, isInView]);
@@ -39,11 +38,13 @@ const Counter = ({ value }: { value: number }) => {
           (ref.current as HTMLElement).textContent = currentValue.toString();
           prevValue = currentValue;
           
-          // تحسين توقيت إضافة وإزالة تأثير الجلو
           if (currentValue === value) {
             (ref.current as HTMLElement).classList.add('text-glow');
-          } else {
-            (ref.current as HTMLElement).classList.remove('text-glow');
+            setTimeout(() => {
+              if (ref.current) {
+                (ref.current as HTMLElement).classList.remove('text-glow');
+              }
+            }, 1000);
           }
         }
       }
@@ -54,8 +55,8 @@ const Counter = ({ value }: { value: number }) => {
   return (
     <span 
       ref={ref} 
-      className="text-primary font-bold transition-all duration-300 inline-block hover:scale-125"
-      style={{ fontSize: '1.2em' }}
+      className="text-primary font-bold transition-all duration-300 inline-block hover:scale-110"
+      style={{ fontSize: '1.2em', willChange: 'transform' }}
     >
       0
     </span>

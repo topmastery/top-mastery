@@ -9,6 +9,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
+import Image from 'next/image';
 
 const Hero = () => {
   const swiperRef = useRef<SwiperType | null>(null);
@@ -86,22 +87,31 @@ const Hero = () => {
         {slides.map((slide, index) => (
           <SwiperSlide key={index} className="relative select-none">
             <div
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105 transition-transform duration-[2000ms] min-h-[100vh] md:min-h-[auto]"
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105 transition-transform duration-[2000ms]"
               style={{ backgroundImage: `url(${slide.image})` }}
-            />
+            >
+              <Image
+                src={slide.image}
+                alt={slide.title}
+                priority={index === 0}
+                fill
+                sizes="100vw"
+                className="hidden"
+              />
+            </div>
             <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/50 to-dark/80" />
-            <div className="relative h-full flex items-center justify-center text-center px-4 py-20 md:py-0">
+            <div className="relative h-full flex items-center justify-center text-center">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.5 }}
-                className="w-full max-w-4xl mx-auto"
+                className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"
               >
                 <motion.h1
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.7 }}
-                  className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-light mb-3 sm:mb-4 md:mb-6 drop-shadow-lg"
+                  className="text-3xl sm:text-4xl md:text-6xl font-bold text-light mb-4 sm:mb-6 drop-shadow-lg"
                 >
                   {slide.title}
                 </motion.h1>
@@ -109,7 +119,7 @@ const Hero = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.9 }}
-                  className="text-base xs:text-lg sm:text-xl md:text-2xl text-light/90 mb-4 sm:mb-6 md:mb-8 drop-shadow-md max-w-3xl mx-auto px-2"
+                  className="text-lg sm:text-xl md:text-2xl text-light/90 mb-6 sm:mb-8 drop-shadow-md max-w-3xl mx-auto"
                 >
                   {slide.subtitle}
                 </motion.p>
@@ -117,11 +127,11 @@ const Hero = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 1.1 }}
-                  className="flex flex-col xs:flex-row items-center justify-center gap-3 xs:gap-4 sm:gap-6 max-w-xl mx-auto px-4"
+                  className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 max-w-xl mx-auto"
                 >
                   <motion.a
                     href={slide.buttonLink}
-                    className="group relative w-full xs:w-auto inline-flex items-center justify-center text-sm sm:text-base px-6 sm:px-8 py-2.5 sm:py-3 md:py-4 bg-primary text-dark font-bold rounded-xl hover:bg-primary-light shadow-lg hover:shadow-primary/50 transition-all duration-300 overflow-hidden"
+                    className="group relative w-full sm:w-auto inline-flex items-center justify-center text-sm sm:text-base px-8 py-3 sm:py-4 bg-primary text-dark font-bold rounded-xl hover:bg-primary-light shadow-lg hover:shadow-primary/50 transition-all duration-300 overflow-hidden"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
@@ -130,7 +140,7 @@ const Hero = () => {
                   </motion.a>
                   <motion.a
                     href={slide.secondaryButtonLink}
-                    className="group relative w-full xs:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-2.5 sm:py-3 md:py-4 rounded-xl border-2 border-light/30 text-light font-bold backdrop-blur-sm hover:border-light hover:bg-light/10 transition-all duration-300 text-sm sm:text-base shadow-lg hover:shadow-light/20"
+                    className="group relative w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 sm:py-4 rounded-xl border-2 border-light/30 text-light font-bold backdrop-blur-sm hover:border-light hover:bg-light/10 transition-all duration-300 text-sm sm:text-base shadow-lg hover:shadow-light/20"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
