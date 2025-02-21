@@ -54,12 +54,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ar" dir="rtl" className="overflow-x-hidden">
-      <body className={`${cairo.className} overflow-x-hidden relative w-full`}>
-        <div className="relative w-full overflow-x-hidden">
-          {children}
-          <SpeedInsights />
-        </div>
+    <html lang="ar" dir="rtl">
+      <body className={cairo.className}>
+        {children}
+        <SpeedInsights />
       </body>
     </html>
   )
