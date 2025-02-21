@@ -1,101 +1,81 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { IconMenu2 } from '@tabler/icons-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { IconMenu2, IconX } from '@tabler/icons-react';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const menuItems = [
-    { href: '#about', label: 'من نحن' },
-    { href: '#services', label: 'خدماتنا' },
-    { href: '#portfolio', label: 'أعمالنا' },
-    { href: '#partners', label: 'شركاؤنا' },
-    { href: '#newsletter', label: 'تواصل معنا' },
+  const navLinks = [
+    { href: '#about', text: 'من نحن' },
+    { href: '#services', text: 'خدماتنا' },
+    { href: '#portfolio', text: 'معرض الأعمال' },
+    { href: '#partners', text: 'شركاؤنا' },
+    { href: '#newsletter', text: 'تواصل معنا' },
   ];
 
   return (
-    <>
-      <header
-        className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-          isScrolled ? 'bg-dark/90 backdrop-blur-md' : 'bg-transparent'
-        }`}
-      >
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-20">
-            <motion.a
-              href="#"
-              className="text-2xl font-bold text-primary"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              TOP MASTERY توب ماستري
-            </motion.a>
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-dark/80 backdrop-blur-lg shadow-lg' : ''}`}>
+      <nav className="container mx-auto px-4 h-20 flex items-center justify-between">
+        <a href="/" className="text-2xl font-bold text-primary">
+          Top Mastery
+        </a>
 
-            <nav className="hidden md:flex items-center gap-8 rtl:space-x-reverse">
-              {menuItems.map((item, index) => (
-                <motion.a
-                  key={item.href}
-                  href={item.href}
-                  className="text-light hover:text-primary transition-colors duration-300"
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                >
-                  {item.label}
-                </motion.a>
-              ))}
-            </nav>
-
-            <div className="flex items-center">
-              <motion.button
-                className="md:hidden p-2 rounded-full hover:bg-dark-light text-light transition-colors duration-300"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <IconMenu2 size={24} />
-              </motion.button>
-            </div>
-          </div>
+        {/* قائمة التنقل للشاشات الكبيرة */}
+        <div className="hidden md:flex items-center space-x-1 rtl:space-x-reverse">
+          {navLinks.map((link) => (
+            <a key={link.href} href={link.href} className="nav-link">
+              {link.text}
+            </a>
+          ))}
         </div>
 
-        {/* Mobile Menu */}
-        <motion.div
-          className={`md:hidden absolute top-20 left-0 w-full bg-dark-light ${
-            isMenuOpen ? 'block' : 'hidden'
-          }`}
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: isMenuOpen ? 1 : 0, y: isMenuOpen ? 0 : -20 }}
-          transition={{ duration: 0.3 }}
+        {/* زر القائمة للهواتف */}
+        <button
+          className="md:hidden text-light hover:text-primary transition-colors duration-300"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="القائمة"
         >
-          <div className="container mx-auto px-4 py-4">
-            {menuItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="block py-2 text-light hover:text-primary transition-colors duration-300"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.label}
-              </a>
-            ))}
-          </div>
-        </motion.div>
-      </header>
-    </>
+          {isMobileMenuOpen ? <IconX size={24} /> : <IconMenu2 size={24} />}
+        </button>
+      </nav>
+
+      {/* القائمة المتحركة للهواتف */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden bg-dark/95 backdrop-blur-lg"
+          >
+            <div className="container mx-auto px-4 py-4">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="block py-3 text-light/80 hover:text-primary transition-colors duration-300 border-b border-light/10 last:border-0"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {link.text}
+                </a>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
   );
 };
 

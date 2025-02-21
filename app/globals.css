@@ -179,15 +179,118 @@
 /* تحسينات للأجهزة المحمولة */
 @media (max-width: 768px) {
   .section-title {
-    @apply text-3xl after:w-16;
+    @apply text-2xl sm:text-3xl after:w-16;
+    padding-bottom: 1rem;
   }
 
   .section-subtitle {
-    @apply text-lg;
+    @apply text-base sm:text-lg mb-8;
   }
 
   .container {
     @apply px-4;
+  }
+
+  /* تحسين المسافات للأجهزة المحمولة */
+  .py-section {
+    @apply py-12 sm:py-16 md:py-20;
+  }
+
+  /* تحسين أحجام الخطوط */
+  h1 {
+    @apply text-2xl sm:text-3xl md:text-4xl;
+  }
+
+  h2 {
+    @apply text-xl sm:text-2xl md:text-3xl;
+  }
+
+  h3 {
+    @apply text-lg sm:text-xl md:text-2xl;
+  }
+
+  p {
+    @apply text-base sm:text-lg;
+  }
+
+  /* تحسين المسافات بين العناصر */
+  .gap-section {
+    @apply gap-6 sm:gap-8 md:gap-10;
+  }
+
+  /* تحسين الأزرار */
+  .btn-primary {
+    @apply py-2.5 px-5 text-sm sm:text-base;
+  }
+}
+
+/* تحسين تجربة اللمس */
+@media (hover: none) {
+  .nav-link:hover::after {
+    width: 0;
+  }
+
+  .nav-link.active::after {
+    width: 100%;
+  }
+
+  .btn-primary:hover {
+    transform: none;
+  }
+
+  .btn-primary:active {
+    transform: scale(0.98);
+  }
+}
+
+/* تحسين أداء الحركات */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* تحسين التحميل البطيء للصور */
+.image-loading {
+  @apply blur-sm animate-pulse;
+}
+
+.image-loaded {
+  @apply blur-none animate-none transition-all duration-500;
+}
+
+/* تحسين الخط للغة العربية على الهواتف */
+@media (max-width: 768px) {
+  html[lang="ar"] {
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+}
+
+/* تحسين التباعد للنصوص العربية */
+html[lang="ar"] {
+  letter-spacing: -0.01em;
+}
+
+/* تحسين عرض الشاشات الصغيرة جداً */
+@media (max-width: 360px) {
+  .xs\:flex-col {
+    flex-direction: column !important;
+  }
+
+  .xs\:w-full {
+    width: 100% !important;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .section-subtitle {
+    font-size: 1rem;
   }
 }
 
