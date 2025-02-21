@@ -2,25 +2,32 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // Check if the request is for a non-existent page
-  if (!request.nextUrl.pathname.startsWith('/_next') && 
-      !request.nextUrl.pathname.startsWith('/api')) {
-    try {
-      // Try to match the URL to your app's routes
-      const url = request.nextUrl.clone();
-      
-      // If no matching route is found, redirect to 404
-      if (!url.pathname.startsWith('/images/') && 
-          !url.pathname.startsWith('/favicon.ico')) {
-        return NextResponse.rewrite(new URL('/404', request.url));
-      }
-    } catch (error) {
-      console.error('Middleware error:', error);
-      return NextResponse.rewrite(new URL('/404', request.url));
-    }
+  // تجاهل المسارات الداخلية والثابتة
+  if (request.nextUrl.pathname.startsWith('/_next') || 
+      request.nextUrl.pathname.startsWith('/api') ||
+      request.nextUrl.pathname.startsWith('/images/') ||
+      request.nextUrl.pathname === '/favicon.ico' ||
+      request.nextUrl.pathname === '/') {
+    return NextResponse.next();
   }
-  
-  return NextResponse.next();
+
+  try {
+    // التحقق من وجود المسار
+    const url = request.nextUrl.clone();
+    const segments = url.pathname.split('/').filter(Boolean);
+    
+    // السماح بالمسارات المعروفة
+    const validPaths = ['about', 'services', 'portfolio', 'partners', 'contact'];
+    if (segments.length === 1 && validPaths.includes(segments[0])) {
+      return NextResponse.next();
+    }
+
+    // إعادة التوجيه إلى 404 للمسارات غير المعروفة
+    return NextResponse.rewrite(new URL('/404', request.url));
+  } catch (error) {
+    console.error('Middleware error:', error);
+    return NextResponse.rewrite(new URL('/404', request.url));
+  }
 }
 
 export const config = {
