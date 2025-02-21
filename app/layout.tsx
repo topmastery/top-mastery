@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next/types'
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { cairo } from './fonts'
 import './globals.css'
 import 'swiper/css'
@@ -53,9 +54,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ar" dir="rtl">
-      <body className={cairo.className}>
-        {children}
+    <html lang="ar" dir="rtl" className="overflow-x-hidden">
+      <body className={`${cairo.className} overflow-x-hidden relative w-full`}>
+        <div className="relative w-full overflow-x-hidden">
+          {children}
+          <SpeedInsights />
+        </div>
       </body>
     </html>
   )

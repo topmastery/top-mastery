@@ -40,41 +40,48 @@ const ServiceCard = memo(({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className={`group bg-dark-light p-8 rounded-xl hover:bg-gradient-to-br ${service.gradient} transition-all duration-500 relative overflow-hidden`}
+      className={`group bg-dark-light p-8 rounded-xl hover:bg-gradient-to-br ${service.gradient} transition-all duration-500 relative overflow-hidden flex flex-col min-h-[500px]`}
     >
       <div className="absolute inset-0 bg-gradient-to-t from-dark/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       
-      <div className="relative z-10">
-        <div className="text-primary mb-6 inline-block transform group-hover:scale-110 transition-transform duration-300">
-          {service.icon}
+      <div className="relative z-10 flex-1 flex flex-col">
+        <div className="flex justify-center mb-8">
+          <div className="text-primary inline-block transform group-hover:scale-110 transition-transform duration-300 p-4 rounded-full bg-dark/20">
+            {service.icon}
+          </div>
         </div>
-        <h3 className="text-xl font-bold mb-4 text-light group-hover:text-primary transition-colors duration-300">
+
+        <h3 className="text-2xl font-bold mb-4 text-light group-hover:text-primary transition-colors duration-300 text-center">
           {service.title}
         </h3>
-        <p className="text-light/70 mb-6 group-hover:text-light/90 transition-colors duration-300">
+
+        <p className="text-light/70 mb-8 group-hover:text-light/90 transition-colors duration-300 text-center leading-relaxed">
           {service.description}
         </p>
-        <ul className="space-y-3 mb-6">
+
+        <ul className="space-y-4 mb-8 flex-1">
           {service.features.map((feature, idx) => (
-            <li key={idx} className="flex items-center text-light/60 group-hover:text-light/80 transition-colors duration-300">
-              <span className="w-1.5 h-1.5 bg-primary rounded-full mr-2" />
-              {feature}
+            <li key={idx} className="flex items-center text-light/60 group-hover:text-light/80 transition-colors duration-300 gap-3">
+              <span className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
+              <span className="flex-1">{feature}</span>
             </li>
           ))}
         </ul>
+
         {service.subFeatures && (
           <div className="grid grid-cols-2 gap-4 mb-8">
             {service.subFeatures.map((subFeature, idx) => (
-              <div key={idx} className="flex items-center gap-2 text-light/50 group-hover:text-light/70 transition-colors duration-300">
-                {subFeature.icon}
+              <div key={idx} className="flex items-center justify-center gap-2 text-light/50 group-hover:text-light/70 transition-colors duration-300 bg-dark/20 p-2 rounded-lg">
+                <span className="text-primary">{subFeature.icon}</span>
                 <span className="text-sm">{subFeature.text}</span>
               </div>
             ))}
           </div>
         )}
+
         <button 
           onClick={() => onServiceRequest(service.title)}
-          className="flex items-center gap-2 text-primary hover:gap-4 transition-all duration-300 font-semibold group/btn"
+          className="flex items-center justify-center gap-3 text-primary hover:gap-4 transition-all duration-300 font-semibold group/btn bg-dark/20 p-4 rounded-lg hover:bg-dark/30 w-full"
         >
           <span>{service.action}</span>
           <IconArrowNarrowLeft 
