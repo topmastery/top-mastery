@@ -29,7 +29,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-dark-light relative pt-16 pb-8">
+    <footer className="bg-dark-light relative pt-12 pb-6 sm:pt-16 sm:pb-8">
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-dark/50 to-transparent opacity-50" />
       
@@ -125,7 +125,7 @@ const Footer = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="md:col-span-4"
           >
-            <div id="newsletter" className="bg-dark/30 p-6 rounded-xl backdrop-blur-sm">
+            <div id="newsletter" className="bg-dark/30 p-4 sm:p-6 rounded-xl backdrop-blur-sm">
               <h3 className="text-xl font-bold text-light mb-4">تواصل معنا</h3>
               <form className="space-y-4">
                 <input
