@@ -74,7 +74,7 @@ const Footer = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="md:col-span-5"
           >
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               {/* Quick Links */}
               <div>
                 <h3 className="text-xl font-bold text-light mb-6">روابط سريعة</h3>
