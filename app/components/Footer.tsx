@@ -33,7 +33,7 @@ const Footer = () => {
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-dark/50 to-transparent opacity-50" />
       
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 mb-8">
           {/* About Section */}
           <motion.div
