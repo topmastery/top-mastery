@@ -1,17 +1,35 @@
 'use client';
 
+import React from 'react';
 import { motion } from 'framer-motion';
 import { IconBrandFacebook, IconBrandInstagram, IconBrandX, IconBrandTiktok, IconBrandLinkedin, IconBrandPinterest, IconBrandYoutube, IconMail, IconPhone, IconMapPin, IconBrandThreads } from '@tabler/icons-react';
 
-const Footer = () => {
-  const quickLinks = [
+interface QuickLink {
+  href: string;
+  label: string;
+}
+
+interface SocialLink {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+}
+
+interface ContactInfo {
+  icon: React.ReactNode;
+  text: string;
+  href: string;
+}
+
+const Footer: React.FC = () => {
+  const quickLinks: QuickLink[] = [
     { href: '#about', label: 'من نحن' },
     { href: '#services', label: 'خدماتنا' },
     { href: '#portfolio', label: 'أعمالنا' },
     { href: '#partners', label: 'شركاؤنا' },
   ];
 
-  const socialLinks = [
+  const socialLinks: SocialLink[] = [
     { href: 'https://facebook.com/topmasteryadv', icon: <IconBrandFacebook size={24} />, label: 'فيسبوك' },
     { href: 'https://instagram.com/topmasteryadv', icon: <IconBrandInstagram size={24} />, label: 'انستجرام' },
     { href: 'https://x.com/topmasteryadv', icon: <IconBrandX size={24} />, label: 'إكس' },
@@ -22,7 +40,7 @@ const Footer = () => {
     { href: 'https://www.threads.net/@topmasteryadv', icon: <IconBrandThreads size={24} />, label: 'ثردس' },
   ];
 
-  const contactInfo = [
+  const contactInfo: ContactInfo[] = [
     { icon: <IconPhone size={24} />, text: '42 2000 32 010 20+', href: 'tel:+201032200042' },
     { icon: <IconMail size={24} />, text: 'topmastery@yandex.com', href: 'mailto:topmastery@yandex.com' },
     { icon: <IconMapPin size={24} />, text: 'الشيخ زايد - الحى 9 - مول العامر - الدور 2', href: 'https://maps.google.com/?q=الشيخ زايد - الحى 9 - مول العامر - الدور 2' },
@@ -74,7 +92,7 @@ const Footer = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="md:col-span-5 lg:col-span-6 order-2"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
+            <div className="flex flex-col sm:grid sm:grid-cols-2 gap-8">
               {/* Quick Links */}
               <div>
                 <h3 className="text-xl font-bold text-light mb-6">روابط سريعة</h3>
