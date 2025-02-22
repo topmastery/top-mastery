@@ -7,30 +7,9 @@
 @tailwind utilities;
 
 :root {
-  --primary-color: #ffd900;
-  --primary-light: #ffe133;
-  --primary-dark: #e6c300;
-  --dark-bg: #121212;
-  --dark-light: #2a2a2a;
-  --light-bg: #ffffff;
-  --light-dark: #f5f5f5;
-  --text-dark: #333333;
-  --text-light: #ffffff;
   --foreground-rgb: 255, 255, 255;
   --background-start-rgb: 0, 0, 0;
   --background-end-rgb: 0, 0, 0;
-}
-
-:root[data-theme="light"] {
-  --dark-bg: #ffffff;
-  --dark-light: #f5f5f5;
-  --text-light: #333333;
-}
-
-:root[data-theme="dark"] {
-  --dark-bg: #121212;
-  --dark-light: #2a2a2a;
-  --text-light: #ffffff;
 }
 
 @layer base {
