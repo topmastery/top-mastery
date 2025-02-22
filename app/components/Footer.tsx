@@ -33,15 +33,15 @@ const Footer = () => {
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-dark/50 to-transparent opacity-50" />
       
-      <div className="container relative">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12">
-          {/* About Section - 3 columns */}
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 mb-12">
+          {/* About Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="md:col-span-3"
+            className="md:col-span-4 lg:col-span-3"
           >
             <h3 className="text-xl font-bold text-primary mb-4">من نحن</h3>
             <p className="text-light/80 leading-relaxed text-sm mb-6">
@@ -66,13 +66,13 @@ const Footer = () => {
             </div>
           </motion.div>
 
-          {/* Links & Contact - 5 columns */}
+          {/* Links & Contact */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="md:col-span-5"
+            className="md:col-span-5 lg:col-span-6"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               {/* Quick Links */}
@@ -123,7 +123,7 @@ const Footer = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="md:col-span-4"
+            className="md:col-span-3"
           >
             <div id="newsletter" className="bg-dark/30 p-4 sm:p-6 rounded-xl backdrop-blur-sm">
               <h3 className="text-xl font-bold text-light mb-4">تواصل معنا</h3>
