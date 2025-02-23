@@ -14,25 +14,10 @@ import AIAssistant from './components/AIAssistant';
 import BackToTopButton from './components/BackToTopButton';
 
 export default function Home() {
-  useEffect(() => {
-    AOS.init({
-      duration: 800,
-      once: true,
-      easing: 'ease-out',
-    });
-  }, []);
-
   return (
-    <main className="min-h-screen bg-dark">
-      <Header />
-      <Hero />
+    <>
       <About />
       <Services />
-      <Portfolio />
-      <Partners />
-      <Footer />
-      <AIAssistant />
-      <BackToTopButton />
-    </main>
+    </>
   );
 }
