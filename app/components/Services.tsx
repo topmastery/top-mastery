@@ -138,16 +138,21 @@ ServiceCard.displayName = 'ServiceCard';
 const Services = (): ReactElement => {
   const handleServiceRequest = (serviceName: string) => {
     try {
-      const newsletterForm = document.querySelector('#newsletter textarea') as HTMLTextAreaElement;
+      const event = new CustomEvent('serviceRequest', { detail: serviceName });
+      window.dispatchEvent(event);
+
+      const newsletterForm = document.querySelector('#newsletter') as HTMLElement;
       if (newsletterForm) {
-        newsletterForm.value = `أود الاستفسار عن خدمة ${serviceName}`;
         newsletterForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
         setTimeout(() => {
-          newsletterForm.focus();
+          const textarea = newsletterForm.querySelector('textarea') as HTMLTextAreaElement;
+          if (textarea) {
+            textarea.focus();
+          }
         }, 800);
       }
     } catch (error) {
-      console.error('Error accessing newsletter form:', error);
+      console.error('Error dispatching service request event:', error);
     }
   };
 

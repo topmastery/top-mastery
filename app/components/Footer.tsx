@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { IconBrandFacebook, IconBrandInstagram, IconBrandX, IconBrandTiktok, IconBrandLinkedin, IconBrandPinterest, IconBrandYoutube, IconMail, IconPhone, IconMapPin, IconBrandThreads } from '@tabler/icons-react';
 
@@ -57,6 +57,21 @@ const Footer: React.FC = () => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const handleServiceRequest = (event: CustomEvent) => {
+      setFormData(prev => ({
+        ...prev,
+        message: `أود الاستفسار عن خدمة ${event.detail}`
+      }));
+    };
+
+    window.addEventListener('serviceRequest', handleServiceRequest as EventListener);
+
+    return () => {
+      window.removeEventListener('serviceRequest', handleServiceRequest as EventListener);
+    };
+  }, []);
 
   const validateField = (name: string, value: string) => {
     if (!value.trim()) {
