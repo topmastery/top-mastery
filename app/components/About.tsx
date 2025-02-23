@@ -142,10 +142,11 @@ const About = () => {
               >
                 <div className="aspect-video rounded-lg overflow-hidden shadow-xl">
                   <Image
-                    src="/images/about.webp"
+                    src="/images/about.webp?v=2" // إضافة معامل version لتجاوز التخزين المؤقت
                     alt="فريق العمل"
                     width={800}
                     height={450}
+                    priority // إضافة priority لتحميل الصورة بشكل أسرع
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-dark/50 to-transparent opacity-60" />
