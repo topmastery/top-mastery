@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { Cairo } from 'next/font/google';
-import './globals.css';
+import '@/src/styles/globals.css'; // تحديث مسار الاستيراد
 
 const cairo = Cairo({ 
   subsets: ['arabic'],

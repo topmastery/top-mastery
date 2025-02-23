@@ -1,34 +1,25 @@
-const cdnConfig = require('./config/cdn.config.ts');
-const cacheConfig = require('./config/cache.config.ts');
-const dependenciesConfig = require('./dependencies.config.js');
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  poweredByHeader: false,
+  compress: true,
   images: {
     remotePatterns: [{ protocol: 'https', hostname: '**' }],
     domains: [],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     formats: ['image/webp'],
-    minimumCacheTTL: 60,
     dangerouslyAllowSVG: true,
+    quality: 75,
+    minimumCacheTTL: 60 * 60 * 24 * 7, // 7 days
   },
   
-  webpack: (config, { dev, isServer }) => {
-    // تكوين موحد للـ cache
+  webpack: (config, { dev }) => {
     config.cache = {
       type: 'filesystem',
       buildDependencies: {
         config: [__filename]
-      },
-      ...cacheConfig.buildCache
-    };
-
-    // تحسين الـ externals
-    config.externals = {
-      ...config.externals,
-      ...cdnConfig.getExternals()
+      }
     };
 
     if (!dev) {
@@ -45,10 +36,20 @@ const nextConfig = {
     return config;
   },
   
-  // تبسيط الإعدادات التجريبية
   experimental: {
-    optimizeDeps: true,
     turbotrace: { enabled: true }
+  },
+
+  // تحسين الأداء
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+    styledComponents: true,
+  },
+  
+  // تحسين التحميل
+  onDemandEntries: {
+    maxInactiveAge: 25 * 1000,
+    pagesBufferLength: 2,
   }
 };
 

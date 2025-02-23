@@ -273,3 +273,51 @@
   transform: scale(1);
   opacity: 1;
 }
+
+/* تحسين أداء الحركات */
+@layer utilities {
+  .animation-delay-200 {
+    animation-delay: 0.2s;
+  }
+  .animation-delay-400 {
+    animation-delay: 0.4s;
+  }
+}
+
+/* تحسين تجربة التمرير */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  @apply transition-all duration-300;
+}
+
+/* تحسين ظهور العناصر */
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* تحسين أداء العناصر الثابتة */
+.sticky-header {
+  @apply fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-dark/80;
+  animation: slideDown 0.5s ease-out forwards;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

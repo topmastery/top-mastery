@@ -1,23 +1,45 @@
 'use client';
 
+import { Suspense, lazy } from 'react';
 import { useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import Header from './components/Header';
-import Hero from './components/Hero';
-import About from './components/About';
-import Services from './components/Services';
-import Portfolio from './components/Portfolio';
-import Partners from './components/Partners';
-import Footer from './components/Footer';
-import AIAssistant from './components/AIAssistant';
-import BackToTopButton from './components/BackToTopButton';
+import LoadingSpinner from './components/LoadingSpinner';
+
+// Lazy loading components
+const Header = lazy(() => import('./components/Header'));
+const Hero = lazy(() => import('./components/Hero'));
+const About = lazy(() => import('./components/About'));
+const Services = lazy(() => import('./components/Services'));
+const Portfolio = lazy(() => import('./components/Portfolio'));
+const Partners = lazy(() => import('./components/Partners'));
+const Footer = lazy(() => import('./components/Footer'));
+const AIAssistant = lazy(() => import('./components/AIAssistant'));
+const BackToTopButton = lazy(() => import('./components/BackToTopButton'));
 
 export default function Home() {
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      once: true,
+      easing: 'ease-in-out',
+      offset: 100,
+      mirror: false,
+      anchorPlacement: 'top-bottom',
+    });
+  }, []);
+
   return (
-    <>
+    <Suspense fallback={<LoadingSpinner />}>
+      <Header />
+      <Hero />
       <About />
       <Services />
-    </>
+      <Portfolio />
+      <Partners />
+      <AIAssistant />
+      <Footer />
+      <BackToTopButton />
+    </Suspense>
   );
 }
