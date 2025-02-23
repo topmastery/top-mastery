@@ -5,6 +5,11 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectFade } from 'swiper/modules';
 import Image from 'next/image';
 
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/effect-fade';
+import 'swiper/css/autoplay';
+
 const Partners = () => {
   const partners = [
     { name: 'شركة 1', logo: '/images/partners/logo1.webp' },
