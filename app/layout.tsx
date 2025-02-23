@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { Cairo } from 'next/font/google';
+import { Metadata } from 'next';
 import { scrollToTop, preventScrollRestoration } from './utils/scroll';
 import '@/src/styles/globals.css';
 
