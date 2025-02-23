@@ -1,4 +1,3 @@
-const cdnConfig = require('./config/cdn.config');
 const cacheConfig = require('./config/cache.config');
 
 /** @type {import('next').NextConfig} */
@@ -23,18 +22,12 @@ const nextConfig = {
       },
     ];
   },
-  webpack: (config, { dev, isServer }) => {
+  webpack: (config, { dev }) => {
     config.cache = {
       type: 'filesystem',
       buildDependencies: {
         config: [__filename]
-      },
-      ...cacheConfig.buildCache
-    };
-
-    config.externals = {
-      ...config.externals,
-      ...cdnConfig.getExternals()
+      }
     };
 
     if (!dev) {
