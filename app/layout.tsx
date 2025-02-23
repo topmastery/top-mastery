@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import { Cairo } from 'next/font/google';
-import { Metadata } from 'next';
 import { scrollToTop, preventScrollRestoration } from './utils/scroll';
 import '@/src/styles/globals.css';
 
@@ -11,12 +10,6 @@ const cairo = Cairo({
   display: 'swap',
   variable: '--font-cairo',
 });
-
-export const metadata: Metadata = {
-  title: 'توب ماستري - خدمات التصميم والتطوير الرقمي',
-  description: 'شركة رائدة في مجال التصميم والتطوير الرقمي، نقدم حلولاً إبداعية متكاملة منذ 2005',
-  keywords: ['تصميم', 'تطوير', 'تسويق رقمي', 'هوية بصرية', 'مواقع إلكترونية'],
-};
 
 export default function RootLayout({
   children,
