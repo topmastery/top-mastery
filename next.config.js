@@ -2,17 +2,24 @@ const cdnConfig = require('./config/cdn.config');
 const cacheConfig = require('./config/cache.config');
 
 /** @type {import('next').NextConfig} */
-const config = {
+const nextConfig = {
+  reactStrictMode: true,
   images: {
-    remotePatterns: [{ protocol: 'https', hostname: '**' }],
-    domains: cdnConfig.domains,
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256],
-    formats: ['image/webp', 'image/avif'],
-    minimumCacheTTL: 60,
-    dangerouslyAllowSVG: true,
+    ...cacheConfig.images,
   },
-  
+  async headers() {
+    return [
+      {
+        source: '/:all*(svg|jpg|png|webp)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: `public, max-age=${cacheConfig.staticCache.maximumCacheTTL}, stale-while-revalidate`,
+          },
+        ],
+      },
+    ];
+  },
   webpack: (config, { dev, isServer }) => {
     config.cache = {
       type: 'filesystem',
@@ -47,4 +54,4 @@ const config = {
   }
 };
 
-module.exports = config;
+module.exports = nextConfig;
