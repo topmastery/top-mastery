@@ -10,8 +10,6 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     formats: ['image/webp'],
     dangerouslyAllowSVG: true,
-    quality: 75,
-    minimumCacheTTL: 60 * 60 * 24 * 7, // 7 days
   },
   
   webpack: (config, { dev }) => {
@@ -36,20 +34,8 @@ const nextConfig = {
     return config;
   },
   
-  experimental: {
-    turbotrace: { enabled: true }
-  },
-
-  // تحسين الأداء
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
-    styledComponents: true,
-  },
-  
-  // تحسين التحميل
-  onDemandEntries: {
-    maxInactiveAge: 25 * 1000,
-    pagesBufferLength: 2,
   }
 };
 
