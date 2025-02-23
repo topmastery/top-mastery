@@ -1,5 +1,7 @@
-import { memo } from 'react';
-import { motion } from 'framer-motion';
+'use client';
+
+import { memo, type ReactElement } from 'react';
+import { motion, type HTMLMotionProps } from 'framer-motion';
 import { 
   IconPalette, 
   IconDeviceLaptop,
@@ -13,27 +15,32 @@ import {
   IconBrandTiktok
 } from '@tabler/icons-react';
 
+interface SubFeature {
+  icon: ReactElement;
+  text: string;
+}
+
+interface Service {
+  icon: ReactElement;
+  title: string;
+  description: string;
+  features: string[];
+  subFeatures?: SubFeature[];
+  action: string;
+  gradient: string;
+}
+
+interface ServiceCardProps {
+  service: Service;
+  index: number;
+  onServiceRequest: (serviceName: string) => void;
+}
+
 const ServiceCard = memo(({ 
   service, 
   index, 
   onServiceRequest 
-}: {
-  service: {
-    icon: React.ReactElement;
-    title: string;
-    description: string;
-    features: string[];
-    subFeatures?: {
-      icon: React.ReactElement;
-      text: string;
-    }[];
-    action: string;
-    gradient: string;
-  };
-  index: number;
-  onServiceRequest: (serviceName: string) => void;
-}) => {
-  ServiceCard.displayName = 'ServiceCard';
+}: ServiceCardProps): ReactElement => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -87,7 +94,9 @@ const ServiceCard = memo(({
   );
 });
 
-const Services = () => {
+ServiceCard.displayName = 'ServiceCard';
+
+const Services = (): ReactElement => {
   const handleServiceRequest = (serviceName: string) => {
     try {
       const newsletterForm = document.querySelector('#newsletter textarea') as HTMLTextAreaElement;
