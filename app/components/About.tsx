@@ -113,20 +113,20 @@ const About = () => {
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 mb-24">
               <motion.div
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className="space-y-6"
+                className="space-y-8"
               >
-                <h3 className="text-3xl font-bold text-primary mb-6">مسيرة نجاح تمتد لعقدين</h3>
-                <p className="text-light/80 leading-loose text-lg">
+                <h3 className="text-3xl lg:text-4xl font-bold text-primary mb-8">مسيرة نجاح تمتد لعقدين</h3>
+                <p className="text-light/80 leading-loose text-lg lg:text-xl">
                   منذ تأسيسنا قبل أكثر من 20 عاماً، ونحن نسعى لتقديم أفضل الحلول الإبداعية لعملائنا. نؤمن بأن النجاح
                   يأتي من خلال الفهم العميق لاحتياجات العملاء وتقديم حلول مبتكرة تناسب تطلعاتهم.
                 </p>
-                <p className="text-light/80 leading-loose text-lg">
+                <p className="text-light/80 leading-loose text-lg lg:text-xl">
                   نفخر بفريقنا المحترف الذي يجمع بين الخبرة والإبداع، ونسعى دائماً لمواكبة
                   أحدث التقنيات والاتجاهات في مجال التصميم والتطوير. خلال مسيرتنا، نجحنا في تنفيذ مئات المشاريع
                   وكسب ثقة العديد من العملاء في مختلف القطاعات.
@@ -154,7 +154,7 @@ const About = () => {
               </motion.div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
               {features.map((feature, index) => (
                 <motion.div
                   key={index}
@@ -162,15 +162,15 @@ const About = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="group text-center p-8 rounded-lg bg-dark hover:bg-dark/80 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  className="group text-center p-8 lg:p-10 rounded-xl bg-dark hover:bg-dark/80 transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
-                  <div className="text-primary mb-6 inline-block transform group-hover:scale-110 transition-transform duration-300">
+                  <div className="text-primary mb-8 inline-block transform group-hover:scale-110 transition-transform duration-300">
                     {feature.icon}
                   </div>
-                  <h3 className="text-xl font-bold mb-4 text-light group-hover:text-primary transition-colors duration-300">
+                  <h3 className="text-xl lg:text-2xl font-bold mb-6 text-light group-hover:text-primary transition-colors duration-300">
                     {feature.title}
                   </h3>
-                  <p className="text-light/80 group-hover:text-light/90 transition-colors duration-300">
+                  <p className="text-base lg:text-lg text-light/80 group-hover:text-light/90 transition-colors duration-300 leading-relaxed">
                     {feature.description}
                   </p>
                 </motion.div>

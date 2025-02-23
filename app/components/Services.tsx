@@ -47,18 +47,18 @@ const ServiceCard = memo(({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className={`group bg-dark-light p-8 rounded-xl hover:bg-gradient-to-br ${service.gradient} transition-all duration-500 relative overflow-hidden`}
+      className={`group bg-dark-light p-8 lg:p-10 rounded-xl hover:bg-gradient-to-br ${service.gradient} transition-all duration-500 relative overflow-hidden`}
     >
       <div className="absolute inset-0 bg-gradient-to-t from-dark/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       
-      <div className="relative z-10">
-        <div className="text-primary mb-6 inline-block transform group-hover:scale-110 transition-transform duration-300">
+      <div className="relative z-10 space-y-6 lg:space-y-8">
+        <div className="text-primary mb-6 lg:mb-8 inline-block transform group-hover:scale-110 transition-transform duration-300">
           {service.icon}
         </div>
-        <h3 className="text-xl font-bold mb-4 text-light group-hover:text-primary transition-colors duration-300">
+        <h3 className="text-xl lg:text-2xl font-bold mb-4 lg:mb-6 text-light group-hover:text-primary transition-colors duration-300">
           {service.title}
         </h3>
-        <p className="text-light/70 mb-6 group-hover:text-light/90 transition-colors duration-300">
+        <p className="text-base lg:text-lg leading-relaxed text-light/70 mb-6 group-hover:text-light/90 transition-colors duration-300">
           {service.description}
         </p>
         <ul className="space-y-3 mb-6">
@@ -184,7 +184,7 @@ const Services = (): ReactElement => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
           {mainServices.map((service, index) => (
             <ServiceCard
               key={index}
