@@ -58,72 +58,65 @@ const Footer: React.FC = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // مسح رسالة الخطأ عند الكتابة
-    if (errors[name as keyof typeof errors]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
-  };
-
-  const validateForm = () => {
-    let isValid = true;
-    const newErrors = {
-      name: '',
-      email: '',
-      message: ''
-    };
-
-    // التحقق من الاسم
-    if (!formData.name.trim()) {
-      newErrors.name = 'الرجاء إدخال الاسم';
-      isValid = false;
+  const validateField = (name: string, value: string) => {
+    if (!value.trim()) {
+      return name === 'name' ? 'الرجاء إدخال الاسم' :
+             name === 'email' ? 'الرجاء إدخال البريد الإلكتروني' :
+             'الرجاء إدخال رسالتك';
     }
 
-    // التحقق من البريد الإلكتروني
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email.trim()) {
-      newErrors.email = 'الرجاء إدخال البريد الإلكتروني';
-      isValid = false;
-    } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'الرجاء إدخال بريد إلكتروني صحيح';
-      isValid = false;
+    if (name === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) {
+        return 'الرجاء إدخال بريد إلكتروني صحيح';
+      }
     }
 
-    // التحقق من الرسالة
-    if (!formData.message.trim()) {
-      newErrors.message = 'الرجاء إدخال رسالتك';
-      isValid = false;
-    }
-
-    setErrors(newErrors);
-    return isValid;
+    return '';
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    
+    // التحقق من الحقول بشكل مستقل
+    const newErrors = {
+      name: validateField('name', formData.name),
+      email: validateField('email', formData.email),
+      message: validateField('message', formData.message),
+    };
+
+    const hasError = Object.values(newErrors).some(error => error !== '');
+    setErrors(newErrors);
+
+    if (hasError) return;
 
     setIsSubmitting(true);
     try {
-      // هنا يمكنك إضافة كود إرسال البيانات إلى الخادم
-      await new Promise(resolve => setTimeout(resolve, 1000)); // محاكاة الإرسال
-      
-      // إعادة تعيين النموذج
-      setFormData({ name: '', email: '', message: '' });
+      // محاكاة إرسال البيانات
+      await new Promise(resolve => setTimeout(resolve, 1000));
       alert('تم إرسال رسالتك بنجاح!');
     } catch (error) {
       alert('حدث خطأ أثناء إرسال الرسالة. الرجاء المحاولة مرة أخرى.');
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    
+    // تحديث قيمة الحقل
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // التحقق من الحقل مباشرة عند الكتابة
+    const error = validateField(name, value);
+    setErrors(prev => ({
+      ...prev,
+      [name]: error
+    }));
   };
 
   return (
@@ -221,12 +214,18 @@ const Footer: React.FC = () => {
                     onChange={handleChange}
                     placeholder="الاسم"
                     className={`w-full bg-dark/50 border ${
-                      errors.name ? 'border-red-500' : 'border-light/10'
+                      errors.name ? 'border-red-500' : formData.name ? 'border-green-500' : 'border-light/10'
                     } rounded-lg px-3 py-2 text-sm text-light placeholder-light/50 
-                    focus:border-primary focus:outline-none transition-colors duration-300`}
+                    outline-none transition-colors duration-300`}
                   />
                   {errors.name && (
-                    <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                    <motion.p
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-red-500 text-xs mt-1"
+                    >
+                      {errors.name}
+                    </motion.p>
                   )}
                 </div>
 
@@ -238,12 +237,18 @@ const Footer: React.FC = () => {
                     onChange={handleChange}
                     placeholder="البريد الإلكتروني"
                     className={`w-full bg-dark/50 border ${
-                      errors.email ? 'border-red-500' : 'border-light/10'
+                      errors.email ? 'border-red-500' : formData.email ? 'border-green-500' : 'border-light/10'
                     } rounded-lg px-3 py-2 text-sm text-light placeholder-light/50 
-                    focus:border-primary focus:outline-none transition-colors duration-300`}
+                    outline-none transition-colors duration-300`}
                   />
                   {errors.email && (
-                    <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                    <motion.p
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-red-500 text-xs mt-1"
+                    >
+                      {errors.email}
+                    </motion.p>
                   )}
                 </div>
 
@@ -255,13 +260,18 @@ const Footer: React.FC = () => {
                     rows={3}
                     placeholder="رسالتك"
                     className={`w-full bg-dark/50 border ${
-                      errors.message ? 'border-red-500' : 'border-light/10'
+                      errors.message ? 'border-red-500' : formData.message ? 'border-green-500' : 'border-light/10'
                     } rounded-lg px-3 py-2 text-sm text-light placeholder-light/50 
-                    focus:border-primary focus:outline-none transition-colors duration-300 
-                    resize-none`}
-                  ></textarea>
+                    outline-none transition-colors duration-300 resize-none`}
+                  />
                   {errors.message && (
-                    <p className="text-red-500 text-xs mt-1">{errors.message}</p>
+                    <motion.p
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-red-500 text-xs mt-1"
+                    >
+                      {errors.message}
+                    </motion.p>
                   )}
                 </div>
 
