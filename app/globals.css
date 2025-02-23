@@ -3,8 +3,13 @@
 @tailwind utilities;
 
 :root {
+  --primary-color: #00A3FF;
   --foreground-rgb: 255, 255, 255;
   --background-rgb: 17, 17, 17;
+}
+
+html {
+  direction: rtl;
 }
 
 body {
