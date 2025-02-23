@@ -1,13 +1,6 @@
 import { Metadata } from 'next';
-import { Cairo } from 'next/font/google';
-import '@/src/styles/globals.css'; // تحديث مسار الاستيراد
-
-const cairo = Cairo({ 
-  subsets: ['arabic'],
-  display: 'swap',
-  variable: '--font-cairo',
-  weight: ['400', '500', '600', '700', '800'], // إضافة أوزان الخط المختلفة
-});
+import { cairo } from './fonts';
+import '@/src/styles/globals.css';
 
 export const metadata: Metadata = {
   title: 'توب ماستري - خدمات التصميم والتطوير الرقمي',
@@ -21,8 +14,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ar" dir="rtl" className={`${cairo.variable} scroll-smooth`}>
-      <body className="min-h-screen bg-dark text-light antialiased font-cairo">
+    <html lang="ar" dir="rtl" className={`${cairo.variable}`}>
+      <body className={`${cairo.className} min-h-screen bg-dark text-light antialiased`}>
         <main>
           {children}
         </main>

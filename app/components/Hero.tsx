@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Swiper as SwiperType } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -13,6 +13,7 @@ import Image from 'next/image';
 
 const Hero = () => {
   const swiperRef = useRef<SwiperType | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const slides = [
     {
@@ -44,8 +45,39 @@ const Hero = () => {
     },
   ];
 
+  useEffect(() => {
+    // تحميل الصور مسبقاً
+    const preloadImages = async () => {
+      try {
+        const imagePromises = slides.map((slide) => {
+          return new Promise((resolve, reject) => {
+            const img = document.createElement('img');
+            img.src = slide.image;
+            img.onload = resolve;
+            img.onerror = reject;
+          });
+        });
+
+        await Promise.all(imagePromises);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error preloading images:', error);
+        setIsLoading(false); // نقوم بإخفاء التحميل حتى في حالة الخطأ
+      }
+    };
+
+    preloadImages();
+  }, []);
+
   return (
-    <section className="relative h-[100vh] w-full overflow-hidden">
+    <section className="relative h-[100vh] w-full overflow-hidden bg-dark">
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="absolute inset-0 bg-dark z-50 flex items-center justify-center">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
+
       <Swiper
         modules={[Navigation, Pagination, Autoplay, EffectFade]}
         effect="fade"
@@ -57,7 +89,8 @@ const Hero = () => {
         autoplay={{
           delay: 5000,
           disableOnInteraction: false,
-          pauseOnMouseEnter: true
+          pauseOnMouseEnter: true,
+          waitForTransition: true
         }}
         pagination={{
           el: '.swiper-pagination',
@@ -82,74 +115,79 @@ const Hero = () => {
         onBeforeInit={(swiper) => {
           swiperRef.current = swiper;
         }}
-        className="h-full w-full"
+        className={`h-full w-full transition-opacity duration-500 ${
+          isLoading ? 'opacity-0' : 'opacity-100'
+        }`}
       >
         {slides.map((slide, index) => (
           <SwiperSlide key={index} className="relative select-none">
-            <div
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105 transition-transform duration-[2000ms]"
-              style={{ backgroundImage: `url(${slide.image})` }}
-            >
+            <div className="absolute inset-0">
               <Image
                 src={slide.image}
                 alt={slide.title}
-                priority={index === 0}
+                priority={true} // تحميل جميع الصور بأولوية عالية
                 fill
                 sizes="100vw"
-                className="hidden"
+                quality={90}
+                className={`object-cover transition-transform duration-[2000ms] transform scale-105
+                           ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+                style={{
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                  willChange: 'transform'
+                }}
+                onLoad={() => {
+                  if (index === slides.length - 1) {
+                    setIsLoading(false);
+                  }
+                }}
               />
             </div>
             <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/50 to-dark/80" />
-            <div className="relative h-full flex items-center justify-center text-center">
+            
+            {!isLoading && (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-                className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="relative h-full flex items-center justify-center text-center"
               >
-                <motion.h1
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.7 }}
-                  className="text-3xl sm:text-4xl md:text-6xl font-bold text-light mb-4 sm:mb-6 drop-shadow-lg"
-                >
-                  {slide.title}
-                </motion.h1>
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.9 }}
-                  className="text-lg sm:text-xl md:text-2xl text-light/90 mb-6 sm:mb-8 drop-shadow-md max-w-3xl mx-auto"
-                >
-                  {slide.subtitle}
-                </motion.p>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 1.1 }}
-                  className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 max-w-xl mx-auto"
-                >
-                  <motion.a
-                    href={slide.buttonLink}
-                    className="group relative w-full sm:w-auto inline-flex items-center justify-center text-sm sm:text-base px-8 py-3 sm:py-4 bg-primary text-dark font-bold rounded-xl hover:bg-primary-light shadow-lg hover:shadow-primary/50 transition-all duration-300 overflow-hidden"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5 }}
+                    className="space-y-6"
                   >
-                    <span className="relative z-10">{slide.buttonText}</span>
-                    <span className="absolute inset-0 bg-gradient-to-r from-primary-light to-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                  </motion.a>
-                  <motion.a
-                    href={slide.secondaryButtonLink}
-                    className="group relative w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 sm:py-4 rounded-xl border-2 border-light/30 text-light font-bold backdrop-blur-sm hover:border-light hover:bg-light/10 transition-all duration-300 text-sm sm:text-base shadow-lg hover:shadow-light/20"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <span className="relative z-10">{slide.secondaryButtonText}</span>
-                    <span className="absolute inset-0 bg-gradient-to-r from-light/20 to-light/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></span>
-                  </motion.a>
-                </motion.div>
+                    <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-light mb-4 sm:mb-6 drop-shadow-lg">
+                      {slide.title}
+                    </h1>
+                    <p className="text-lg sm:text-xl md:text-2xl text-light/90 mb-6 sm:mb-8 drop-shadow-md max-w-3xl mx-auto">
+                      {slide.subtitle}
+                    </p>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 max-w-xl mx-auto">
+                      <motion.a
+                        href={slide.buttonLink}
+                        className="group relative w-full sm:w-auto inline-flex items-center justify-center text-sm sm:text-base px-8 py-3 sm:py-4 bg-primary text-dark font-bold rounded-xl hover:bg-primary-light shadow-lg hover:shadow-primary/50 transition-all duration-300 overflow-hidden"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        {slide.buttonText}
+                      </motion.a>
+                      <motion.a
+                        href={slide.secondaryButtonLink}
+                        className="group relative w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 sm:py-4 rounded-xl border-2 border-light/30 text-light font-bold backdrop-blur-sm hover:border-light hover:bg-light/10 transition-all duration-300 text-sm sm:text-base shadow-lg hover:shadow-light/20"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        {slide.secondaryButtonText}
+                      </motion.a>
+                    </div>
+                  </motion.div>
+                </div>
               </motion.div>
-            </div>
+            )}
           </SwiperSlide>
         ))}
         <div className="swiper-pagination !bottom-6 sm:!bottom-8 !z-20 !px-4"></div>

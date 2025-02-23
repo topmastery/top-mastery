@@ -36,59 +36,98 @@ interface ServiceCardProps {
   onServiceRequest: (serviceName: string) => void;
 }
 
-const ServiceCard = memo(({ 
-  service, 
-  index, 
-  onServiceRequest 
-}: ServiceCardProps): ReactElement => {
+const ServiceCard = memo(({ service, index, onServiceRequest }: ServiceCardProps): ReactElement => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className={`group bg-dark-light p-8 lg:p-10 rounded-xl hover:bg-gradient-to-br ${service.gradient} transition-all duration-500 relative overflow-hidden`}
+      className="group bg-dark-light p-8 lg:p-10 rounded-xl hover:bg-gradient-to-br 
+                 relative overflow-hidden border border-light/5 hover:border-primary/20
+                 shadow-lg hover:shadow-xl transition-all duration-500"
     >
-      <div className="absolute inset-0 bg-gradient-to-t from-dark/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      {/* Gradient Background */}
+      <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 
+                      transition-opacity duration-500 ${service.gradient}`} />
       
-      <div className="relative z-10 space-y-6 lg:space-y-8">
-        <div className="text-primary mb-6 lg:mb-8 inline-block transform group-hover:scale-110 transition-transform duration-300">
-          {service.icon}
+      <div className="relative z-10 flex flex-col items-center">
+        {/* Icon Section */}
+        <div className="mb-10 relative">
+          <div className="w-20 h-20 rounded-2xl bg-dark flex items-center justify-center
+                        transform group-hover:scale-110 group-hover:rotate-6
+                        transition-all duration-500 border border-primary/20">
+            <div className="text-primary transform transition-transform duration-500
+                          group-hover:scale-125">
+              {service.icon}
+            </div>
+          </div>
+          <div className="absolute -inset-4 bg-primary/5 rounded-full blur-2xl 
+                        opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         </div>
-        <h3 className="text-xl lg:text-2xl font-bold mb-4 lg:mb-6 text-light group-hover:text-primary transition-colors duration-300">
+
+        {/* Title & Description */}
+        <h3 className="text-2xl lg:text-3xl font-bold mb-6 text-light group-hover:text-primary 
+                     text-center transition-colors duration-300">
           {service.title}
         </h3>
-        <p className="text-base lg:text-lg leading-relaxed text-light/70 mb-6 group-hover:text-light/90 transition-colors duration-300">
+        <p className="text-base lg:text-lg leading-relaxed text-light/70 mb-8 text-center
+                    group-hover:text-light/90 transition-colors duration-300">
           {service.description}
         </p>
-        <ul className="space-y-3 mb-6">
+
+        {/* Features List */}
+        <ul className="space-y-4 mb-10 w-full">
           {service.features.map((feature, idx) => (
-            <li key={idx} className="flex items-center text-light/60 group-hover:text-light/80 transition-colors duration-300">
-              <span className="w-1.5 h-1.5 bg-primary rounded-full mr-2" />
-              {feature}
-            </li>
+            <motion.li
+              key={idx}
+              className="flex items-center gap-4 text-light/60 group-hover:text-light/80 
+                       transition-colors duration-300"
+            >
+              <span className="w-2 h-2 bg-primary rounded-full flex-shrink-0
+                           group-hover:scale-125 transition-transform duration-300" />
+              <span>{feature}</span>
+            </motion.li>
           ))}
         </ul>
+
+        {/* Sub Features Grid */}
         {service.subFeatures && (
-          <div className="grid grid-cols-2 gap-4 mb-8">
+          <div className={`grid ${
+            // تغيير عدد الأعمدة بناءً على عدد العناصر
+            service.subFeatures.length === 4 ? 'grid-cols-4' : 'grid-cols-2'
+          } gap-4 mb-10 w-full border-t border-b border-light/10 py-6`}>
             {service.subFeatures.map((subFeature, idx) => (
-              <div key={idx} className="flex items-center gap-2 text-light/50 group-hover:text-light/70 transition-colors duration-300">
-                {subFeature.icon}
-                <span className="text-sm">{subFeature.text}</span>
+              <div key={idx} 
+                   className="flex flex-col items-center gap-2 text-light/50 
+                            group-hover:text-light/70 transition-all duration-300 
+                            hover:text-primary"
+              >
+                <span className="text-primary transform group-hover:scale-110 
+                              transition-transform duration-300">
+                  {subFeature.icon}
+                </span>
+                <span className="text-xs font-medium text-center">{subFeature.text}</span>
               </div>
             ))}
           </div>
         )}
-        <button 
+
+        {/* Action Button */}
+        <motion.button 
           onClick={() => onServiceRequest(service.title)}
-          className="flex items-center gap-2 text-primary hover:gap-4 transition-all duration-300 font-semibold group/btn"
+          className="w-full bg-primary text-dark font-bold py-4 px-8 rounded-xl
+                   hover:bg-primary-light transition-all duration-300 group/btn
+                   flex items-center justify-center gap-3"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
-          <span>{service.action}</span>
+          <span className="text-base">{service.action}</span>
           <IconArrowNarrowLeft 
             size={20} 
-            className="transform group-hover/btn:translate-x-1 transition-transform duration-300" 
+            className="transform group-hover/btn:-translate-x-1 transition-transform duration-300" 
           />
-        </button>
+        </motion.button>
       </div>
     </motion.div>
   );
@@ -116,7 +155,7 @@ const Services = (): ReactElement => {
     {
       icon: <IconPalette size={40} />,
       title: 'التصميم الإبداعي',
-      description: 'نقدم حلولاً إبداعية عالية الجودة تناسب احتياجاتك وتعكس هويتك البصرية.',
+      description: 'نقدم حلولاً إبداعية تناسب احتياجاتك وتعكس هويتك البصرية.',
       features: [
         'تصميم الهوية البصرية الكاملة',
         'تصميم المطبوعات والإعلانات',
@@ -155,10 +194,10 @@ const Services = (): ReactElement => {
         'تحسين محركات البحث SEO'
       ],
       subFeatures: [
-        { icon: <IconBrandInstagram size={20} />, text: 'انستجرام' },
-        { icon: <IconBrandFacebook size={20} />, text: 'فيسبوك' },
-        { icon: <IconBrandTiktok size={20} />, text: 'تيك توك' },
-        { icon: <IconSeo size={20} />, text: 'SEO' },
+        { icon: <IconBrandInstagram size={24} />, text: 'انستجرام' },
+        { icon: <IconBrandFacebook size={24} />, text: 'فيسبوك' },
+        { icon: <IconBrandTiktok size={24} />, text: 'تيك توك' },
+        { icon: <IconSeo size={24} />, text: 'SEO' },
       ],
       action: 'اطلب الخدمة',
       gradient: 'from-green-500/10 to-primary/5'
@@ -167,8 +206,10 @@ const Services = (): ReactElement => {
 
   return (
     <section id="services" className="py-section bg-dark relative">
-      <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-primary/10 to-transparent" />
+      {/* خلفية زخرفية */}
       <div className="absolute inset-0 bg-grid-pattern opacity-5" />
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-primary/5 to-transparent" />
+      <div className="absolute bottom-0 left-0 w-1/3 h-full bg-gradient-to-r from-primary/5 to-transparent" />
       
       <div className="container relative">
         <motion.div
@@ -176,15 +217,15 @@ const Services = (): ReactElement => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
           <h2 className="section-title">خدماتنا</h2>
           <p className="section-subtitle">
-            نقدم باقة متكاملة من الخدمات الرقمية التي تساعد عملائنا على النمو والتميز
+            نقدم باقة متكاملة من الخدمات الرقمية لمساعدة عملائنا على النمو والتميز
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
           {mainServices.map((service, index) => (
             <ServiceCard
               key={index}

@@ -37,6 +37,7 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 100px; /* زيادة المسافة عند النقر على الروابط */
+    font-family: var(--font-cairo), ui-sans-serif, system-ui, -apple-system, sans-serif;
   }
   
   body {
@@ -69,6 +70,10 @@
 
   ::selection {
     @apply bg-primary/30 text-light;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-cairo font-bold;
   }
 }
 
@@ -140,6 +145,24 @@
 
   .py-section {
     @apply py-16 sm:py-20 md:py-24 lg:py-32; /* زيادة المسافات بين الأقسام */
+  }
+
+  .service-card-hover {
+    @apply transform transition-all duration-500 hover:scale-[1.02];
+  }
+
+  .feature-dot {
+    @apply w-2 h-2 bg-primary rounded-full transform transition-transform duration-300;
+  }
+
+  .icon-container {
+    @apply relative w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center
+           transform transition-all duration-300;
+  }
+
+  .icon-glow {
+    @apply absolute -inset-4 bg-primary/5 rounded-full blur-2xl opacity-0 
+           transition-opacity duration-500;
   }
 }
 
