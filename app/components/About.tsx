@@ -113,7 +113,7 @@ const About = () => {
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20">
               <motion.div
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -121,12 +121,12 @@ const About = () => {
                 transition={{ duration: 0.6 }}
                 className="space-y-6"
               >
-                <h3 className="text-2xl font-bold text-primary">مسيرة نجاح تمتد لعقدين</h3>
-                <p className="text-light/80 leading-relaxed">
+                <h3 className="text-3xl font-bold text-primary mb-6">مسيرة نجاح تمتد لعقدين</h3>
+                <p className="text-light/80 leading-loose text-lg">
                   منذ تأسيسنا قبل أكثر من 20 عاماً، ونحن نسعى لتقديم أفضل الحلول الإبداعية لعملائنا. نؤمن بأن النجاح
                   يأتي من خلال الفهم العميق لاحتياجات العملاء وتقديم حلول مبتكرة تناسب تطلعاتهم.
                 </p>
-                <p className="text-light/80 leading-relaxed">
+                <p className="text-light/80 leading-loose text-lg">
                   نفخر بفريقنا المحترف الذي يجمع بين الخبرة والإبداع، ونسعى دائماً لمواكبة
                   أحدث التقنيات والاتجاهات في مجال التصميم والتطوير. خلال مسيرتنا، نجحنا في تنفيذ مئات المشاريع
                   وكسب ثقة العديد من العملاء في مختلف القطاعات.
@@ -154,7 +154,7 @@ const About = () => {
               </motion.div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
               {features.map((feature, index) => (
                 <motion.div
                   key={index}
