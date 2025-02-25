@@ -16,9 +16,10 @@
   --light-dark: #f5f5f5;
   --text-dark: #333333;
   --text-light: #ffffff;
-  --foreground-rgb: 255, 255, 255;
+  --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 0, 0, 0;
   --background-end-rgb: 0, 0, 0;
+  --background-rgb: 255, 255, 255;
 }
 
 :root[data-theme="light"] {
@@ -46,12 +47,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: rgb(var(--foreground-rgb));
-    background: linear-gradient(
-        to bottom,
-        transparent,
-        rgb(var(--background-end-rgb))
-      )
-      rgb(var(--background-start-rgb));
+    background: rgb(var(--background-rgb));
     font-size: 16px;
     line-height: 1.7;
   }

@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { Cairo } from 'next/font/google';
 import { scrollToTop, preventScrollRestoration } from './utils/scroll';
-import '@/src/styles/globals.css';
+import '../src/styles/globals.css';
 
 const cairo = Cairo({ 
   subsets: ['arabic'],
