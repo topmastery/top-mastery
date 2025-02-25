@@ -152,16 +152,25 @@ const Portfolio = () => {
     }
   }, [router, pathname, searchParams]);
 
-  const closeModal = useCallback(() => {
+  const closeModal = useCallback((e?: React.MouseEvent | KeyboardEvent) => {
+    // تجنب الإغلاق إذا كان النقر على القائمة المنبثقة
+    if (e && 'target' in e) {
+      const target = e.target as HTMLElement;
+      if (target.closest('.share-menu')) {
+        return;
+      }
+    }
+
     setSelectedProject(null);
     setShowShareTooltip(false);
     
-    // Remove project parameter from URL
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete('project');
-    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
-    
-    router.push(newUrl, { scroll: false });
+    // تحديث URL فقط إذا كان هناك مشروع مفتوح
+    if (searchParams.has('project')) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete('project');
+      const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+      router.push(newUrl, { scroll: false });
+    }
   }, [router, pathname, searchParams]);
 
   const handleShare = async (platform: string, project: Project): Promise<void> => {
@@ -242,6 +251,18 @@ const Portfolio = () => {
 
     handleURLChange();
   }, [searchParams, projects]);
+
+  // إضافة مراقب لزر Escape
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedProject) {
+        closeModal();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [selectedProject, closeModal]);
 
   return (
     <section id="portfolio" className="py-section bg-dark">
@@ -349,7 +370,10 @@ const Portfolio = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <button
-                onClick={closeModal}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  closeModal();
+                }}
                 className="absolute top-4 right-4 text-light/80 hover:text-light z-10 bg-dark/50 rounded-full p-2 transition-all duration-300 hover:bg-dark/70 hover:scale-110"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
