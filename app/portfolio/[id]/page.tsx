@@ -4,26 +4,7 @@ import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-}
-
-const projects: Project[] = [
-  {
-    id: 1,
-    title: "مشروع نموذجي",
-    description: "وصف المشروع النموذجي",
-    image: "/project-placeholder.jpg",
-  },
-];
-
-export function getProjectById(id: number): Project | undefined {
-  return projects.find(project => project.id === id);
-}
+import { getProjectById } from '../../../data/projects';
 
 export default function ProjectPage() {
   const params = useParams();
