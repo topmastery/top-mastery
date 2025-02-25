@@ -1,13 +1,23 @@
 'use client';
 
+import type { ReactElement } from 'react';
 import { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { IconMenu2 } from '@tabler/icons-react';
 
-const Header = () => {
+interface MenuItem {
+  href: string;
+  label: string;
+}
+
+const Header = (): ReactElement => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,7 +39,7 @@ const Header = () => {
     };
   }, []);
 
-  const menuItems = [
+  const menuItems: MenuItem[] = [
     { href: '#about', label: 'من نحن' },
     { href: '#services', label: 'خدماتنا' },
     { href: '#portfolio', label: 'أعمالنا' },
@@ -74,9 +84,11 @@ const Header = () => {
             <div className="flex items-center">
               <motion.button
                 className="md:hidden p-2 rounded-full hover:bg-dark-light text-light transition-colors duration-300"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                onClick={toggleMenu}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
+                aria-label={isMenuOpen ? 'إغلاق القائمة' : 'فتح القائمة'}
+                aria-expanded={isMenuOpen}
               >
                 <IconMenu2 size={24} />
               </motion.button>
