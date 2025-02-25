@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -12,13 +12,24 @@ interface Project {
   description: string;
 }
 
+interface Filter {
+  id: string;
+  label: string;
+}
+
+interface ShareButton {
+  platform: string;
+  icon: JSX.Element;
+  label: string;
+}
+
 const Portfolio = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showShareTooltip, setShowShareTooltip] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
-  const filters = [
+  const filters: Filter[] = [
     { id: 'all', label: 'الكل' },
     { id: 'web', label: 'تصميم مواقع' },
     { id: 'brand', label: 'هوية بصرية' },
@@ -26,7 +37,7 @@ const Portfolio = () => {
     { id: 'prints', label: 'مطبوعات' },
   ];
 
-  const projects = [
+  const projects: Project[] = [
     {
       id: 1,
       title: 'تصميم موقع شركة عقارات',
@@ -117,17 +128,31 @@ const Portfolio = () => {
     ? projects
     : projects.filter(project => project.category === activeFilter);
 
-  const handleProjectClick = (project: Project) => {
-    window.location.href = `/portfolio/${project.id}`;
+  const handleProjectClick = (project: Project, e: React.MouseEvent) => {
+    e.preventDefault();
+    setSelectedProject(project);
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      urlParams.set('project', project.id.toString());
+      const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+      window.history.pushState({}, '', newUrl);
+    }
   };
 
   const closeModal = () => {
     setSelectedProject(null);
     setShowShareTooltip(false);
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      urlParams.delete('project');
+      const newUrl = `${window.location.pathname}${urlParams.toString() ? '?' + urlParams.toString() : ''}`;
+      window.history.pushState({}, '', newUrl);
+    }
   };
 
-  const handleShare = async (platform: string, project: Project) => {
-    const projectUrl = `${window.location.origin}/portfolio/${project.id}`;
+  const handleShare = async (platform: string, project: Project): Promise<void> => {
+    // تغيير تكوين الرابط هنا
+    const projectUrl = `${window.location.origin}/?project=${project.id}`;
     const text = `شاهد مشروع "${project.title}" من توب ماستري`;
     
     let shareUrl = '';
@@ -161,7 +186,7 @@ const Portfolio = () => {
     }
   };
 
-  const shareButtons = [
+  const shareButtons: ShareButton[] = [
     { platform: 'facebook', icon: <IconBrandFacebook size={20} />, label: 'فيسبوك' },
     { platform: 'x', icon: <IconBrandX size={20} />, label: 'إكس' },
     { platform: 'whatsapp', icon: <IconBrandWhatsapp size={20} />, label: 'واتساب' },
@@ -170,7 +195,7 @@ const Portfolio = () => {
   ];
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: Event) => {
       const target = event.target as HTMLElement;
       if (!target.closest('.share-menu') && !target.closest('.share-button')) {
         setShowShareTooltip(false);
@@ -180,6 +205,45 @@ const Portfolio = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    // Get project ID from URL
+    const getProjectFromURL = () => {
+      if (typeof window !== 'undefined') {
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('project');
+        if (projectId) {
+          const project = projects.find(p => p.id === parseInt(projectId));
+          if (project) {
+            // Scroll to portfolio section
+            const portfolioSection = document.getElementById('portfolio');
+            portfolioSection?.scrollIntoView({ behavior: 'smooth' });
+            
+            // Open the modal with a slight delay to ensure smooth scrolling
+            setTimeout(() => {
+              setSelectedProject(project);
+            }, 500);
+          }
+        }
+      }
+    };
+
+    getProjectFromURL();
+  }, []); // Run once on component mount
+
+  // Update URL when project is selected/closed
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (selectedProject) {
+        urlParams.set('project', selectedProject.id.toString());
+      } else {
+        urlParams.delete('project');
+      }
+      const newUrl = `${window.location.pathname}${urlParams.toString() ? '?' + urlParams.toString() : ''}`;
+      window.history.pushState({}, '', newUrl);
+    }
+  }, [selectedProject]);
 
   return (
     <section id="portfolio" className="py-section bg-dark">
@@ -219,20 +283,20 @@ const Portfolio = () => {
           layout
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
-          <AnimatePresence mode="wait">
+          <AnimatePresence>
             {filteredProjects.map((project) => (
-              <Link 
-                href={`/portfolio/${project.id}`} 
+              <motion.div
                 key={project.id}
-                className="block"
+                layout
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.4 }}
               >
-                <motion.div
-                  layout
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.4 }}
-                  className="group relative overflow-hidden rounded-lg cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300"
+                <Link 
+                  href={`/?project=${project.id}`} // تغيير الرابط هنا
+                  className="block group relative overflow-hidden rounded-lg cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300"
+                  onClick={(e) => handleProjectClick(project, e)}
                 >
                   <div className="aspect-video overflow-hidden bg-dark-light">
                     <Image
@@ -260,8 +324,8 @@ const Portfolio = () => {
                       </div>
                     </div>
                   </div>
-                </motion.div>
-              </Link>
+                </Link>
+              </motion.div>
             ))}
           </AnimatePresence>
         </motion.div>

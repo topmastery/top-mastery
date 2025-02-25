@@ -1,21 +1,23 @@
 'use client';
 
-import { Suspense, lazy } from 'react';
-import { useEffect } from 'react';
+import dynamic from 'next/dynamic';
+import { Suspense, useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import LoadingSpinner from './components/LoadingSpinner';
 
-// Lazy loading components
-const Header = lazy(() => import('./components/Header'));
-const Hero = lazy(() => import('./components/Hero'));
-const About = lazy(() => import('./components/About'));
-const Services = lazy(() => import('./components/Services'));
-const Portfolio = lazy(() => import('./components/Portfolio'));
-const Partners = lazy(() => import('./components/Partners'));
-const Footer = lazy(() => import('./components/Footer'));
-const AIAssistant = lazy(() => import('./components/AIAssistant'));
-const BackToTopButton = lazy(() => import('./components/BackToTopButton'));
+// Lazy loading with priority
+const Header = dynamic(() => import('./components/Header'), { ssr: true });
+const Hero = dynamic(() => import('./components/Hero'), { ssr: true });
+
+// Regular lazy loading
+const About = dynamic(() => import('./components/About'));
+const Services = dynamic(() => import('./components/Services'));
+const Portfolio = dynamic(() => import('./components/Portfolio'));
+const Partners = dynamic(() => import('./components/Partners'));
+const Footer = dynamic(() => import('./components/Footer'));
+const AIAssistant = dynamic(() => import('./components/AIAssistant'));
+const BackToTopButton = dynamic(() => import('./components/BackToTopButton'));
 
 export default function Home() {
   useEffect(() => {

@@ -1,14 +1,11 @@
 export const scrollToTop = () => {
   if (typeof window !== 'undefined') {
-    window.scrollTo({
-      top: 0,
-      behavior: 'instant'
-    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 };
 
 export const preventScrollRestoration = () => {
-  if ('scrollRestoration' in history) {
+  if (typeof window !== 'undefined') {
     history.scrollRestoration = 'manual';
   }
 };

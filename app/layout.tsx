@@ -3,13 +3,15 @@
 import { useEffect } from 'react';
 import { Cairo } from 'next/font/google';
 import { scrollToTop, preventScrollRestoration } from './utils/scroll';
-import '../src/styles/globals.css';
+import '@/styles/globals.css'; // تغيير المسار للمسار الصحيح
 
 const cairo = Cairo({ 
   subsets: ['arabic'],
   display: 'swap',
   variable: '--font-cairo',
 });
+
+export const dynamic = 'force-dynamic';
 
 export default function RootLayout({
   children,
