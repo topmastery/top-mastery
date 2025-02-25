@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 import { IconBrandFacebook, IconBrandWhatsapp, IconBrandTelegram, IconLink, IconShare, IconCheck, IconBrandX } from '@tabler/icons-react';
 
 interface Project {
@@ -117,7 +118,7 @@ const Portfolio = () => {
     : projects.filter(project => project.category === activeFilter);
 
   const handleProjectClick = (project: Project) => {
-    setSelectedProject(project);
+    window.location.href = `/portfolio/${project.id}`;
   };
 
   const closeModal = () => {
@@ -220,43 +221,47 @@ const Portfolio = () => {
         >
           <AnimatePresence mode="wait">
             {filteredProjects.map((project) => (
-              <motion.div
+              <Link 
+                href={`/portfolio/${project.id}`} 
                 key={project.id}
-                layout
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.4 }}
-                className="group relative overflow-hidden rounded-lg cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300"
-                onClick={() => handleProjectClick(project)}
+                className="block"
               >
-                <div className="aspect-video overflow-hidden bg-dark-light">
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    width={640}
-                    height={360}
-                    className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-110"
-                    priority={project.id <= 6}
-                    loading={project.id <= 6 ? "eager" : "lazy"}
-                  />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-dark/95 via-dark/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
-                  <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                    <h3 className="text-xl font-bold text-light mb-2 drop-shadow-lg">
-                      {project.title}
-                    </h3>
-                    <p className="text-light/90 text-sm leading-relaxed drop-shadow-lg">
-                      {project.description}
-                    </p>
-                    <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
-                      <span className="inline-block bg-primary text-dark text-sm font-bold px-3 py-1 rounded-full">
-                        {filters.find(f => f.id === project.category)?.label}
-                      </span>
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.4 }}
+                  className="group relative overflow-hidden rounded-lg cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300"
+                >
+                  <div className="aspect-video overflow-hidden bg-dark-light">
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      width={640}
+                      height={360}
+                      className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-110"
+                      priority={project.id <= 6}
+                      loading={project.id <= 6 ? "eager" : "lazy"}
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-dark/95 via-dark/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                      <h3 className="text-xl font-bold text-light mb-2 drop-shadow-lg">
+                        {project.title}
+                      </h3>
+                      <p className="text-light/90 text-sm leading-relaxed drop-shadow-lg">
+                        {project.description}
+                      </p>
+                      <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                        <span className="inline-block bg-primary text-dark text-sm font-bold px-3 py-1 rounded-full">
+                          {filters.find(f => f.id === project.category)?.label}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
+              </Link>
             ))}
           </AnimatePresence>
         </motion.div>
