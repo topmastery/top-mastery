@@ -153,25 +153,13 @@ const Portfolio = () => {
     }
   }, [router, pathname, searchParams]);
 
-  const closeModal = useCallback((e?: ReactMouseEvent | KeyboardEvent) => {
-    // تجنب الإغلاق إذا كان النقر على القائمة المنبثقة
-    if (e && 'target' in e) {
-      const target = e.target as HTMLElement;
-      if (target.closest('.share-menu')) {
-        return;
-      }
-    }
-
+  const closeModal = useCallback(() => {
     setSelectedProject(null);
     setShowShareTooltip(false);
-    
-    // تحديث URL فقط إذا كان هناك مشروع مفتوح
-    if (searchParams.has('project')) {
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete('project');
-      const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
-      router.push(newUrl, { scroll: false });
-    }
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('project');
+    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+    router.push(newUrl, { scroll: false });
   }, [router, pathname, searchParams]);
 
   const handleShare = async (platform: string, project: Project): Promise<void> => {
@@ -261,47 +249,23 @@ const Portfolio = () => {
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
   }, [selectedProject, closeModal]);
 
-  const handleModalClose = useCallback((e?: Event) => {
-    if (e && e instanceof MouseEvent) {
-      const target = e.target as HTMLElement;
-      // تأكد من أن النقر كان خارج المودال وليس على أزرار المشاركة
-      if (!target.closest('.modal-content') || target.closest('.close-modal')) {
-        closeModal();
-      }
-    } else {
-      // إغلاق عند الضغط على ESC أو زر الإغلاق
+  // تبسيط التعامل مع النقر خارج المودال
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.classList.contains('modal-backdrop')) {
       closeModal();
     }
-  }, [closeModal]);
+  };
 
-  // إضافة مراقب للنقر خارج المودال
-  useEffect(() => {
-    const handleClickOutside = (e: Event) => {
-      if (selectedProject && e instanceof MouseEvent) {
-        handleModalClose(e);
-      }
-    };
-
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && selectedProject) {
-        handleModalClose();
-      }
-    };
-
-    if (selectedProject) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('keydown', handleEsc);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEsc);
-    };
-  }, [selectedProject, handleModalClose]);
+  // تبسيط التعامل مع زر الإغلاق
+  const handleCloseButtonClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    closeModal();
+  };
 
   return (
     <section id="portfolio" className="py-section bg-dark">
@@ -397,11 +361,8 @@ const Portfolio = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={(e: ReactMouseEvent) => {
-              e.stopPropagation();
-              closeModal();
-            }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-dark/95 p-4 backdrop-blur-sm"
+            onClick={handleBackdropClick}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-dark/95 p-4 backdrop-blur-sm modal-backdrop"
           >
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
@@ -412,10 +373,7 @@ const Portfolio = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  closeModal();
-                }}
+                onClick={handleCloseButtonClick}
                 className="close-modal absolute top-4 right-4 text-light/80 hover:text-light z-10 bg-dark/50 rounded-full p-2 transition-all duration-300 hover:bg-dark/70 hover:scale-110"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
