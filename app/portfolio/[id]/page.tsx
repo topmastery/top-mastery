@@ -5,30 +5,29 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export interface Project {
+interface Project {
   id: number;
   title: string;
   description: string;
   image: string;
 }
 
-export const projects: Project[] = [
-  // Add your projects here
+const projects: Project[] = [
   {
     id: 1,
-    title: "مثال مشروع",
-    description: "وصف المشروع",
-    image: "/images/project1.jpg"
-  }
+    title: "مشروع نموذجي",
+    description: "وصف المشروع النموذجي",
+    image: "/project-placeholder.jpg",
+  },
 ];
 
-export const getProjectById = (id: number) => {
+export function getProjectById(id: number): Project | undefined {
   return projects.find(project => project.id === id);
-};
+}
 
 export default function ProjectPage() {
   const params = useParams();
-  const [project, setProject] = useState<typeof projects[0] | null>(null);
+  const [project, setProject] = useState<any>(null);
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
