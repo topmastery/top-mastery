@@ -1,4 +1,5 @@
-import { useState, useEffect, MouseEvent, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import type { MouseEvent as ReactMouseEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -132,7 +133,7 @@ const Portfolio = () => {
     ? projects
     : projects.filter(project => project.category === activeFilter);
 
-  const handleProjectClick = useCallback((project: Project, e: React.MouseEvent) => {
+  const handleProjectClick = useCallback((project: Project, e: ReactMouseEvent) => {
     e.preventDefault();
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
@@ -152,7 +153,7 @@ const Portfolio = () => {
     }
   }, [router, pathname, searchParams]);
 
-  const closeModal = useCallback((e?: React.MouseEvent | KeyboardEvent) => {
+  const closeModal = useCallback((e?: ReactMouseEvent | KeyboardEvent) => {
     // تجنب الإغلاق إذا كان النقر على القائمة المنبثقة
     if (e && 'target' in e) {
       const target = e.target as HTMLElement;
@@ -264,6 +265,44 @@ const Portfolio = () => {
     return () => document.removeEventListener('keydown', handleEscape);
   }, [selectedProject, closeModal]);
 
+  const handleModalClose = useCallback((e?: Event) => {
+    if (e && e instanceof MouseEvent) {
+      const target = e.target as HTMLElement;
+      // تأكد من أن النقر كان خارج المودال وليس على أزرار المشاركة
+      if (!target.closest('.modal-content') || target.closest('.close-modal')) {
+        closeModal();
+      }
+    } else {
+      // إغلاق عند الضغط على ESC أو زر الإغلاق
+      closeModal();
+    }
+  }, [closeModal]);
+
+  // إضافة مراقب للنقر خارج المودال
+  useEffect(() => {
+    const handleClickOutside = (e: Event) => {
+      if (selectedProject && e instanceof MouseEvent) {
+        handleModalClose(e);
+      }
+    };
+
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedProject) {
+        handleModalClose();
+      }
+    };
+
+    if (selectedProject) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEsc);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [selectedProject, handleModalClose]);
+
   return (
     <section id="portfolio" className="py-section bg-dark">
       <div className="container">
@@ -358,7 +397,10 @@ const Portfolio = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={closeModal}
+            onClick={(e: ReactMouseEvent) => {
+              e.stopPropagation();
+              closeModal();
+            }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-dark/95 p-4 backdrop-blur-sm"
           >
             <motion.div
@@ -366,7 +408,7 @@ const Portfolio = () => {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
               transition={{ type: "spring", duration: 0.5 }}
-              className="relative max-w-4xl w-full bg-dark-light rounded-lg overflow-hidden shadow-2xl"
+              className="modal-content relative max-w-4xl w-full bg-dark-light rounded-lg overflow-hidden shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -374,7 +416,7 @@ const Portfolio = () => {
                   e.stopPropagation();
                   closeModal();
                 }}
-                className="absolute top-4 right-4 text-light/80 hover:text-light z-10 bg-dark/50 rounded-full p-2 transition-all duration-300 hover:bg-dark/70 hover:scale-110"
+                className="close-modal absolute top-4 right-4 text-light/80 hover:text-light z-10 bg-dark/50 rounded-full p-2 transition-all duration-300 hover:bg-dark/70 hover:scale-110"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

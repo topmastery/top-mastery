@@ -9,9 +9,10 @@ const Menu = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const toggleMenu = useCallback(() => {
-    setIsOpen(prev => !prev);
-  }, []);
+  const handleMenuToggle = (e: React.MouseEvent) => {
+    e.stopPropagation(); // منع انتشار الحدث
+    setIsOpen(!isOpen);
+  };
 
   const handleLinkClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
@@ -32,28 +33,29 @@ const Menu = () => {
     }
   }, [router, pathname]);
 
-  // إغلاق القائمة عند الضغط خارجها
+  // إضافة مراقب للنقر على الشاشة
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (isOpen && !target.closest('.mobile-menu') && !target.closest('.menu-button')) {
-        setIsOpen(false);
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (isOpen) {
+        const target = event.target as HTMLElement;
+        if (!target.closest('.mobile-menu') && !target.closest('.menu-button')) {
+          setIsOpen(false);
+        }
       }
     };
 
-    // إغلاق القائمة عند الضغط على ESC
-    const handleEscape = (event: KeyboardEvent) => {
+    const handleEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isOpen) {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleEscape);
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('keydown', handleEsc);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('keydown', handleEsc);
     };
   }, [isOpen]);
 
@@ -68,7 +70,7 @@ const Menu = () => {
   return (
     <>
       <button 
-        onClick={toggleMenu}
+        onClick={handleMenuToggle}
         className="menu-button lg:hidden p-2 hover:bg-dark-light rounded-lg transition-colors duration-300"
         aria-label={isOpen ? "إغلاق القائمة" : "فتح القائمة"}
       >
