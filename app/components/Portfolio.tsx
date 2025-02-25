@@ -2,6 +2,7 @@ import { useState, useEffect, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { IconBrandFacebook, IconBrandWhatsapp, IconBrandTelegram, IconLink, IconShare, IconCheck, IconBrandX } from '@tabler/icons-react';
 
 interface Project {
@@ -24,6 +25,7 @@ interface ShareButton {
 }
 
 const Portfolio = () => {
+  const router = useRouter();
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showShareTooltip, setShowShareTooltip] = useState(false);
@@ -131,23 +133,13 @@ const Portfolio = () => {
   const handleProjectClick = (project: Project, e: React.MouseEvent) => {
     e.preventDefault();
     setSelectedProject(project);
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      urlParams.set('project', project.id.toString());
-      const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
-      window.history.pushState({}, '', newUrl);
-    }
+    router.push(`/?project=${project.id}`, { scroll: false });
   };
 
   const closeModal = () => {
     setSelectedProject(null);
     setShowShareTooltip(false);
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      urlParams.delete('project');
-      const newUrl = `${window.location.pathname}${urlParams.toString() ? '?' + urlParams.toString() : ''}`;
-      window.history.pushState({}, '', newUrl);
-    }
+    router.push('/', { scroll: false });
   };
 
   const handleShare = async (platform: string, project: Project): Promise<void> => {
@@ -229,21 +221,15 @@ const Portfolio = () => {
     };
 
     getProjectFromURL();
-  }, []); // Run once on component mount
+    
+    // Add popstate event listener
+    const handlePopState = () => {
+      getProjectFromURL();
+    };
 
-  // Update URL when project is selected/closed
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (selectedProject) {
-        urlParams.set('project', selectedProject.id.toString());
-      } else {
-        urlParams.delete('project');
-      }
-      const newUrl = `${window.location.pathname}${urlParams.toString() ? '?' + urlParams.toString() : ''}`;
-      window.history.pushState({}, '', newUrl);
-    }
-  }, [selectedProject]);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []); // Run once on component mount
 
   return (
     <section id="portfolio" className="py-section bg-dark">
