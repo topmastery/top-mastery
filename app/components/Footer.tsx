@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 import { IconBrandFacebook, IconBrandInstagram, IconBrandX, IconBrandTiktok, IconBrandLinkedin, IconBrandPinterest, IconBrandYoutube, IconMail, IconPhone, IconMapPin, IconBrandThreads } from '@tabler/icons-react';
 
 interface QuickLink {
@@ -22,6 +24,32 @@ interface ContactInfo {
 }
 
 const Footer: React.FC = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (href.startsWith('#')) {
+      // Handle internal links
+      const section = document.querySelector(href);
+      if (section) {
+        if (isMobile) {
+          // Simple scroll for mobile
+          section.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          // Smooth scroll with URL update for desktop
+          section.scrollIntoView({ behavior: 'smooth' });
+          router.push(pathname + href, { scroll: false });
+        }
+      }
+    } else {
+      // Handle external links
+      window.open(href, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   const quickLinks: QuickLink[] = [
     { href: '#about', label: 'من نحن' },
     { href: '#services', label: 'خدماتنا' },
@@ -175,14 +203,14 @@ const Footer: React.FC = () => {
                 <ul className="space-y-2">
                   {quickLinks.map((link, index) => (
                     <li key={index}>
-                      <a href={link.href}
+                      <Link href={link.href} onClick={(e) => handleLinkClick(e, link.href)}
                          className="text-light/60 hover:text-primary transition-all duration-300 
                                   flex items-center gap-2 group text-sm"
                       >
                         <span className="w-1.5 h-1.5 bg-primary rounded-full transform scale-0 
                                      group-hover:scale-100 transition-transform duration-300" />
                         <span>{link.label}</span>
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -194,7 +222,7 @@ const Footer: React.FC = () => {
                 <ul className="space-y-3">
                   {contactInfo.map((info, index) => (
                     <li key={index}>
-                      <a href={info.href}
+                      <Link href={info.href} onClick={(e) => handleLinkClick(e, info.href)}
                          target="_blank"
                          rel="noopener noreferrer"
                          className="flex items-center gap-3 text-light/60 hover:text-primary 
@@ -205,7 +233,7 @@ const Footer: React.FC = () => {
                           {React.cloneElement(info.icon as React.ReactElement, { size: 20 })}
                         </span>
                         <span className="break-all">{info.text}</span>
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>

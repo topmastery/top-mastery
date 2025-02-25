@@ -1,8 +1,8 @@
-import { useState, useEffect, MouseEvent } from 'react';
+import { useState, useEffect, MouseEvent, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { IconBrandFacebook, IconBrandWhatsapp, IconBrandTelegram, IconLink, IconShare, IconCheck, IconBrandX } from '@tabler/icons-react';
 
 interface Project {
@@ -26,6 +26,8 @@ interface ShareButton {
 
 const Portfolio = () => {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showShareTooltip, setShowShareTooltip] = useState(false);
@@ -130,17 +132,37 @@ const Portfolio = () => {
     ? projects
     : projects.filter(project => project.category === activeFilter);
 
-  const handleProjectClick = (project: Project, e: React.MouseEvent) => {
+  const handleProjectClick = useCallback((project: Project, e: React.MouseEvent) => {
     e.preventDefault();
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
     setSelectedProject(project);
-    router.push(`/?project=${project.id}`, { scroll: false });
-  };
+    
+    // Create new URLSearchParams
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('project', project.id.toString());
+    
+    // Update URL without page reload
+    if (isMobile) {
+      // Use full navigation for mobile devices
+      router.push(`${pathname}?${params.toString()}`);
+    } else {
+      // Use smooth navigation for desktop
+      router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    }
+  }, [router, pathname, searchParams]);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setSelectedProject(null);
     setShowShareTooltip(false);
-    router.push('/', { scroll: false });
-  };
+    
+    // Remove project parameter from URL
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('project');
+    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+    
+    router.push(newUrl, { scroll: false });
+  }, [router, pathname, searchParams]);
 
   const handleShare = async (platform: string, project: Project): Promise<void> => {
     // تغيير تكوين الرابط هنا
@@ -199,37 +221,27 @@ const Portfolio = () => {
   }, []);
 
   useEffect(() => {
-    // Get project ID from URL
-    const getProjectFromURL = () => {
-      if (typeof window !== 'undefined') {
-        const urlParams = new URLSearchParams(window.location.search);
-        const projectId = urlParams.get('project');
-        if (projectId) {
-          const project = projects.find(p => p.id === parseInt(projectId));
-          if (project) {
-            // Scroll to portfolio section
-            const portfolioSection = document.getElementById('portfolio');
-            portfolioSection?.scrollIntoView({ behavior: 'smooth' });
-            
-            // Open the modal with a slight delay to ensure smooth scrolling
-            setTimeout(() => {
-              setSelectedProject(project);
-            }, 500);
-          }
+    // Get project ID from URL and handle mobile back button
+    const handleURLChange = () => {
+      const projectId = searchParams.get('project');
+      if (projectId) {
+        const project = projects.find(p => p.id === parseInt(projectId));
+        if (project) {
+          const portfolioSection = document.getElementById('portfolio');
+          portfolioSection?.scrollIntoView({ behavior: 'smooth' });
+          
+          // Open modal
+          setSelectedProject(project);
         }
+      } else {
+        // Close modal if no project in URL
+        setSelectedProject(null);
+        setShowShareTooltip(false);
       }
     };
 
-    getProjectFromURL();
-    
-    // Add popstate event listener
-    const handlePopState = () => {
-      getProjectFromURL();
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, []); // Run once on component mount
+    handleURLChange();
+  }, [searchParams, projects]);
 
   return (
     <section id="portfolio" className="py-section bg-dark">
@@ -280,9 +292,10 @@ const Portfolio = () => {
                 transition={{ duration: 0.4 }}
               >
                 <Link 
-                  href={`/?project=${project.id}`} // تغيير الرابط هنا
+                  href={`${pathname}?project=${project.id}`}
                   className="block group relative overflow-hidden rounded-lg cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300"
                   onClick={(e) => handleProjectClick(project, e)}
+                  prefetch={false}
                 >
                   <div className="aspect-video overflow-hidden bg-dark-light">
                     <Image
