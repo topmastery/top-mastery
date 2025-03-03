@@ -1,10 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { MouseEvent as ReactMouseEvent } from 'react';
+'use client';
+
+import { useState, useRef, useEffect, useCallback } from 'react';
+import type { MouseEvent, KeyboardEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { IconBrandFacebook, IconBrandWhatsapp, IconBrandTelegram, IconLink, IconShare, IconCheck, IconBrandX } from '@tabler/icons-react';
+import { IconBrandFacebook, IconBrandWhatsapp, IconBrandTelegram, IconLink, IconShare, IconCheck, IconBrandX, IconX } from '@tabler/icons-react';
 
 interface Project {
   id: number;
@@ -33,6 +35,7 @@ const Portfolio = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showShareTooltip, setShowShareTooltip] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const filters: Filter[] = [
     { id: 'all', label: 'الكل' },
@@ -133,7 +136,7 @@ const Portfolio = () => {
     ? projects
     : projects.filter(project => project.category === activeFilter);
 
-  const handleProjectClick = useCallback((project: Project, e: ReactMouseEvent) => {
+  const handleProjectClick = useCallback((project: Project, e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
@@ -206,20 +209,20 @@ const Portfolio = () => {
     { platform: 'copy', icon: <IconLink size={20} />, label: 'نسخ الرابط' },
   ];
 
-  useEffect(() => {
-    const handleClickOutside = (event: Event) => {
-      const target = event.target as HTMLElement;
-      if (!target.closest('.share-menu') && !target.closest('.share-button')) {
-        setShowShareTooltip(false);
-      }
-    };
+  // Close modal when clicking outside
+  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).classList.contains('modal-backdrop')) {
+      closeModal();
+    }
+  }, [closeModal]);
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  // Close modal when clicking the close button
+  const handleCloseButtonClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    closeModal();
+  }, [closeModal]);
 
   useEffect(() => {
-    // Get project ID from URL and handle mobile back button
     const handleURLChange = () => {
       const projectId = searchParams.get('project');
       if (projectId) {
@@ -227,45 +230,45 @@ const Portfolio = () => {
         if (project) {
           const portfolioSection = document.getElementById('portfolio');
           portfolioSection?.scrollIntoView({ behavior: 'smooth' });
-          
-          // Open modal
           setSelectedProject(project);
         }
-      } else {
-        // Close modal if no project in URL
+      } else if (selectedProject) {
         setSelectedProject(null);
         setShowShareTooltip(false);
       }
     };
 
-    handleURLChange();
-  }, [searchParams, projects]);
-
-  // إضافة مراقب لزر Escape
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && selectedProject) {
+    const handleEscape = (e: globalThis.KeyboardEvent) => {
+      if (e.key === 'Escape') {
         closeModal();
       }
     };
 
+    const handleClickOutside = (e: globalThis.MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Handle both modal and share menu clicks
+      if (modalRef.current && !modalRef.current.contains(target as Node)) {
+        if (!target.closest('.share-menu') && !target.closest('.share-button')) {
+          closeModal();
+        }
+      }
+      if (!target.closest('.share-menu') && !target.closest('.share-button')) {
+        setShowShareTooltip(false);
+      }
+    };
+
+    // Initial URL check
+    handleURLChange();
+
+    // Event listeners
     window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, [selectedProject, closeModal]);
+    document.addEventListener('mousedown', handleClickOutside);
 
-  // تبسيط التعامل مع النقر خارج المودال
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    const target = e.target as HTMLElement;
-    if (target.classList.contains('modal-backdrop')) {
-      closeModal();
-    }
-  };
-
-  // تبسيط التعامل مع زر الإغلاق
-  const handleCloseButtonClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    closeModal();
-  };
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [searchParams, closeModal]); // Only depend on searchParams and closeModal
 
   return (
     <section id="portfolio" className="py-section bg-dark">
@@ -371,6 +374,7 @@ const Portfolio = () => {
               transition={{ type: "spring", duration: 0.5 }}
               className="modal-content relative max-w-4xl w-full bg-dark-light rounded-lg overflow-hidden shadow-2xl"
               onClick={(e) => e.stopPropagation()}
+              ref={modalRef}
             >
               <button
                 onClick={handleCloseButtonClick}
@@ -413,9 +417,10 @@ const Portfolio = () => {
                           exit={{ opacity: 0, scale: 0.8 }}
                           className="absolute top-full left-0 mt-2 bg-dark rounded-lg shadow-lg p-2 z-10 share-menu"
                           onClick={(e) => e.stopPropagation()}
+
                         >
                           <div className="flex gap-2">
-                            {shareButtons.map((btn) => (
+                            {shareButtons.map((btn, index) => (
                               <motion.button
                                 key={btn.platform}
                                 onClick={(e) => {
@@ -427,12 +432,12 @@ const Portfolio = () => {
                                 whileTap={{ scale: 0.9 }}
                                 title={btn.label}
                                 style={{
-                                  color: copiedIndex === shareButtons.indexOf(btn) ? '#22c55e' : undefined,
-                                  transform: copiedIndex === shareButtons.indexOf(btn) ? 'rotateY(360deg)' : 'rotateY(0deg)',
+                                  color: copiedIndex === index ? '#22c55e' : undefined,
+                                  transform: copiedIndex === index ? 'rotateY(360deg)' : 'rotateY(0deg)',
                                   transition: 'all 0.5s ease-in-out'
                                 }}
                               >
-                                {copiedIndex === shareButtons.indexOf(btn) ? <IconCheck size={20} /> : btn.icon}
+                                {copiedIndex === index ? <IconCheck size={20} /> : btn.icon}
                               </motion.button>
                             ))}
                           </div>

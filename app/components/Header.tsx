@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactElement } from 'react';
+import type { ReactElement, MouseEvent } from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IconMenu2 } from '@tabler/icons-react';
@@ -15,28 +15,26 @@ const Header = (): ReactElement => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // تحسين منطق تبديل القائمة
-  const toggleMenu = () => {
-    setIsMenuOpen(prevState => !prevState);
+  const toggleMenu = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation(); // منع انتشار الحدث
+    setIsMenuOpen(!isMenuOpen);
   };
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
       // إغلاق القائمة عند التمرير
-      if (isMenuOpen) {
+      setIsMenuOpen(false);
+    };
+
+    const handleClickOutside = (e: globalThis.MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setIsMenuOpen(false);
       }
     };
 
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+    const handleEscape = (e: globalThis.KeyboardEvent) => {
+      if (e.key === 'Escape') {
         setIsMenuOpen(false);
       }
     };
@@ -50,7 +48,7 @@ const Header = (): ReactElement => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
     };
-  }, [isMenuOpen]);
+  }, []);
 
   const menuItems: MenuItem[] = [
     { href: '#about', label: 'من نحن' },
