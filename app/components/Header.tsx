@@ -15,13 +15,18 @@ const Header = (): ReactElement => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  // تحسين منطق تبديل القائمة
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    setIsMenuOpen(prevState => !prevState);
   };
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
+      // إغلاق القائمة عند التمرير
+      if (isMenuOpen) {
+        setIsMenuOpen(false);
+      }
     };
 
     const handleClickOutside = (event: MouseEvent) => {
@@ -30,14 +35,22 @@ const Header = (): ReactElement => {
       }
     };
 
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMenuOpen(false);
+      }
+    };
+
     window.addEventListener('scroll', handleScroll);
     document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
     };
-  }, []);
+  }, [isMenuOpen]);
 
   const menuItems: MenuItem[] = [
     { href: '#about', label: 'من نحن' },
@@ -90,35 +103,41 @@ const Header = (): ReactElement => {
                 aria-label={isMenuOpen ? 'إغلاق القائمة' : 'فتح القائمة'}
                 aria-expanded={isMenuOpen}
               >
-                <IconMenu2 size={24} />
+                <IconMenu2 
+                  size={24} 
+                  style={{ transform: isMenuOpen ? 'rotate(180deg)' : 'rotate(0)' }}
+                  className="transition-transform duration-300"
+                />
               </motion.button>
             </div>
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        <motion.div
-          ref={menuRef}
-          className={`md:hidden absolute top-20 left-0 w-full bg-dark-light ${
-            isMenuOpen ? 'block' : 'hidden'
-          }`}
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: isMenuOpen ? 1 : 0, y: isMenuOpen ? 0 : -20 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="container mx-auto px-4 py-4">
-            {menuItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="block py-2 text-light hover:text-primary transition-colors duration-300"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.label}
-              </a>
-            ))}
-          </div>
-        </motion.div>
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              ref={menuRef}
+              className="md:hidden absolute top-20 left-0 w-full bg-dark-light"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="container mx-auto px-4 py-4">
+                {menuItems.map((item) => (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    className="block py-2 text-light hover:text-primary transition-colors duration-300"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
     </>
   );
